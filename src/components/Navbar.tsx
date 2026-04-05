@@ -1,0 +1,139 @@
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import logoImg from "@/assets/alifer-logo.jpeg";
+
+interface NavbarProps {
+  onGetStarted: () => void;
+}
+
+const Navbar = ({ onGetStarted }: NavbarProps) => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+
+  const links = [
+    { label: "Courses", href: "#courses" },
+    { label: "About", href: "#teacher" },
+    { label: "Why Us", href: "#why-us" },
+    { label: "Success Stories", href: "#success" },
+    { label: "Contact", href: "#footer" },
+  ];
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      const sections = links.map((l) => l.href.slice(1));
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i]);
+        if (el && el.getBoundingClientRect().top <= 120) {
+          setActiveSection(sections[i]);
+          return;
+        }
+      }
+      setActiveSection("");
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <motion.nav
+      initial={{ y: -80 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-background/70 backdrop-blur-xl border-b border-border/30 shadow-lg shadow-background/20"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="container mx-auto flex items-center justify-between py-3 px-4">
+        <a href="#" className="flex items-center gap-2 group">
+          <img
+            src={logoImg}
+            alt="Alifer Academy"
+            className="h-10 w-10 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all"
+          />
+          <span className="text-xl font-display font-bold gradient-text">Alifer Academy</span>
+        </a>
+
+        <div className="hidden md:flex items-center gap-1">
+          {links.map((l) => {
+            const isActive = activeSection === l.href.slice(1);
+            return (
+              <a
+                key={l.label}
+                href={l.href}
+                className={`relative text-sm px-3 py-2 rounded-lg transition-colors duration-200 ${
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {l.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute inset-0 bg-primary/10 rounded-lg -z-10"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
+                )}
+              </a>
+            );
+          })}
+          <Button
+            onClick={onGetStarted}
+            size="sm"
+            className="ml-3 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+          >
+            Get Started
+          </Button>
+        </div>
+
+        <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="md:hidden overflow-hidden bg-background/80 backdrop-blur-xl border-t border-border/30"
+          >
+            <div className="flex flex-col gap-1 p-4">
+              {links.map((l) => (
+                <a
+                  key={l.label}
+                  href={l.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`px-3 py-2 rounded-lg transition-colors ${
+                    activeSection === l.href.slice(1)
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  }`}
+                >
+                  {l.label}
+                </a>
+              ))}
+              <Button
+                onClick={() => { onGetStarted(); setMobileOpen(false); }}
+                className="mt-2 bg-primary text-primary-foreground"
+              >
+                Get Started
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
+  );
+};
+
+export default Navbar;
