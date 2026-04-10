@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
 import logoImg from "@/assets/alifer-logo.jpeg";
 
 interface NavbarProps {
@@ -12,6 +13,7 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const { theme, toggleTheme } = useTheme();
 
   const links = [
     { label: "Courses", href: "#courses" },
@@ -47,7 +49,7 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-background/70 backdrop-blur-xl border-b border-border/30 shadow-lg shadow-background/20"
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/30 shadow-lg shadow-background/20"
           : "bg-transparent"
       }`}
     >
@@ -85,18 +87,73 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
               </a>
             );
           })}
+
+          {/* Theme Toggle */}
+          <motion.button
+            onClick={toggleTheme}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            aria-label="Toggle theme"
+            className="ml-2 w-9 h-9 rounded-lg border border-border/40 bg-muted/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
+          >
+            <AnimatePresence mode="wait">
+              {theme === "dark" ? (
+                <motion.div
+                  key="sun"
+                  initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Sun className="h-4 w-4 text-yellow-400" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="moon"
+                  initial={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Moon className="h-4 w-4 text-indigo-400" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
+
           <Button
             onClick={onGetStarted}
             size="sm"
-            className="ml-3 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+            className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
           >
             Get Started
           </Button>
         </div>
 
-        <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex md:hidden items-center gap-2">
+          {/* Mobile Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="w-9 h-9 rounded-lg border border-border/40 bg-muted/40 flex items-center justify-center text-muted-foreground"
+          >
+            <AnimatePresence mode="wait">
+              {theme === "dark" ? (
+                <motion.div key="sun-m" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+                  <Sun className="h-4 w-4 text-yellow-400" />
+                </motion.div>
+              ) : (
+                <motion.div key="moon-m" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+                  <Moon className="h-4 w-4 text-indigo-400" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
+
+          <button className="text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -105,7 +162,7 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden bg-background/80 backdrop-blur-xl border-t border-border/30"
+            className="md:hidden overflow-hidden bg-background/90 backdrop-blur-xl border-t border-border/30"
           >
             <div className="flex flex-col gap-1 p-4">
               {links.map((l) => (
