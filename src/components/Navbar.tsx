@@ -16,6 +16,7 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
   const { theme, toggleTheme } = useTheme();
 
   const links = [
+    { label: "Insights", href: "#insights" },
     { label: "Courses", href: "#courses" },
     { label: "About", href: "#teacher" },
     { label: "Why Us", href: "#why-us" },

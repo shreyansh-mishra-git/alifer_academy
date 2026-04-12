@@ -220,7 +220,7 @@ const HeroCarousel = ({ onEnroll }: { onEnroll?: () => void }) => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="flex flex-wrap gap-3"
+                  className="flex flex-col sm:flex-row flex-wrap gap-3"
                 >
                   <Button
                     size="lg"
@@ -233,8 +233,12 @@ const HeroCarousel = ({ onEnroll }: { onEnroll?: () => void }) => {
                   </Button>
                   <Button
                     size="lg"
-                    variant="outline"
-                    className="gap-2 px-8 py-6 rounded-xl text-base border-white/30 text-white hover:bg-white/10"
+                    className="gap-2 px-8 py-6 rounded-xl text-base font-semibold text-white shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
+                    style={{
+                      background: "rgba(255,255,255,0.15)",
+                      backdropFilter: "blur(12px)",
+                      border: "2px solid rgba(255,255,255,0.5)",
+                    }}
                     onClick={() => document.getElementById("courses")?.scrollIntoView({ behavior: "smooth" })}
                   >
                     View All Courses

@@ -17,6 +17,7 @@ interface Course {
   validity?: string;
   language?: string;
   type?: string;
+  image?: string;
 }
 
 interface CourseDetailModalProps {
@@ -77,12 +78,12 @@ const CourseDetailModal = ({ course, onClose }: CourseDetailModalProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[200] flex items-start justify-center"
-        style={{ paddingTop: "60px" }}
+        className="fixed inset-0 z-[200] flex items-start sm:items-center justify-center overflow-y-auto"
+        style={{ paddingTop: "60px", paddingBottom: "24px" }}
         onClick={onClose}
       >
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
 
         {/* Modal */}
         <motion.div
@@ -90,8 +91,8 @@ const CourseDetailModal = ({ course, onClose }: CourseDetailModalProps) => {
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 40 }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          className="relative w-full max-w-3xl mx-4 mb-4 rounded-2xl overflow-hidden shadow-2xl"
-          style={{ maxHeight: "85vh" }}
+          className="relative w-full max-w-3xl mx-4 rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+          style={{ maxHeight: "calc(100vh - 100px)" }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Banner */}
@@ -141,7 +142,7 @@ const CourseDetailModal = ({ course, onClose }: CourseDetailModalProps) => {
           </div>
 
           {/* Body — Scrollable */}
-          <div className="overflow-y-auto bg-card" style={{ maxHeight: "calc(85vh - 280px)" }}>
+          <div className="overflow-y-auto bg-card flex-1" style={{ minHeight: 0 }}>
             {/* Course Details Grid */}
             <div className="p-6 border-b border-border/30">
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Course Details</h3>
@@ -267,7 +268,7 @@ const CourseDetailModal = ({ course, onClose }: CourseDetailModalProps) => {
           </div>
 
           {/* Footer CTA */}
-          <div className="p-5 bg-card border-t border-border/30 flex flex-col sm:flex-row gap-3 items-center justify-between">
+          <div className="p-5 bg-card border-t border-border/30 flex flex-col sm:flex-row gap-3 items-center justify-between flex-shrink-0">
             <div>
               <div className="text-xs text-muted-foreground">Ready to unlock everything?</div>
               <div className="flex items-center gap-2">
@@ -277,10 +278,16 @@ const CourseDetailModal = ({ course, onClose }: CourseDetailModalProps) => {
             </div>
             <div className="flex gap-3 w-full sm:w-auto">
               <Button variant="outline" onClick={onClose} className="flex-1 sm:flex-none border-border">
-                Maybe Later
+                Close
               </Button>
               <Button
                 className="flex-1 sm:flex-none gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25"
+                onClick={() => {
+                  window.open(
+                    `https://wa.me/919999999999?text=Hi! I'm interested in enrolling for ${encodeURIComponent(course.title)}`,
+                    "_blank"
+                  );
+                }}
               >
                 Enroll Now <ArrowRight className="h-4 w-4" />
               </Button>
