@@ -16,40 +16,42 @@ const HeroSection = ({ onExplore, onGetStarted }: HeroProps) => (
       <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
     </div>
 
-    {/* Animated mesh gradient blobs */}
+    {/* Animated mesh gradient blobs - Hidden on mobile for performance */}
     <motion.div
       animate={{ x: [0, 30, -20, 0], y: [0, -20, 30, 0] }}
       transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl"
+      className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl hidden md:block"
     />
     <motion.div
       animate={{ x: [0, -30, 20, 0], y: [0, 20, -30, 0] }}
       transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl"
+      className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl hidden md:block"
     />
     <motion.div
       animate={{ x: [0, 20, -10, 0], y: [0, -30, 10, 0] }}
       transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute top-1/2 right-1/3 w-64 h-64 bg-secondary/10 rounded-full blur-3xl"
+      className="absolute top-1/2 right-1/3 w-64 h-64 bg-secondary/10 rounded-full blur-3xl hidden md:block"
     />
 
-    {/* Particle dots */}
-    {Array.from({ length: 20 }).map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute w-1 h-1 bg-primary/30 rounded-full"
-        style={{
-          top: `${10 + Math.random() * 80}%`,
-          left: `${10 + Math.random() * 80}%`,
-        }}
-        animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-        transition={{
-          duration: 3 + Math.random() * 4,
-          repeat: Infinity,
-          delay: Math.random() * 3,
-        }}
-      />
-    ))}
+    {/* Particle dots - Only show subset or hide on mobile */}
+    <div className="hidden md:block">
+      {Array.from({ length: 20 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-primary/30 rounded-full"
+          style={{
+            top: `${10 + Math.random() * 80}%`,
+            left: `${10 + Math.random() * 80}%`,
+          }}
+          animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
+          transition={{
+            duration: 3 + Math.random() * 4,
+            repeat: Infinity,
+            delay: Math.random() * 3,
+          }}
+        />
+      ))}
+    </div>
 
     <div className="relative z-10 container mx-auto px-4 text-center">
       <motion.div

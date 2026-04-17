@@ -130,7 +130,7 @@ const CoursesSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {courses.map((c, i) => {
             const meta = categoryMeta[c.category] ?? { accent: "#94a3b8" };
             
@@ -142,23 +142,23 @@ const CoursesSection = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
                 whileHover={{ y: -8, transition: { duration: 0.25 } }}
-                className={`relative glass-card rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl border border-border/30 hover:shadow-primary/20 ${
+                className={`relative glass-card rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-2xl border border-border/30 hover:shadow-primary/20 flex flex-col ${
                   c.popular ? "ring-1 ring-primary/30" : ""
                 }`}
                 onClick={() => setSelectedCourse(c)}
               >
                 {/* Popular badge */}
                 {c.popular && (
-                  <div className="absolute top-3 right-3 z-30 flex items-center gap-1 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-lg shadow-primary/30">
-                    <Flame className="h-3 w-3" />
+                  <div className="absolute top-2 right-2 z-30 flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] sm:text-xs font-semibold shadow-lg shadow-primary/30">
+                    <Flame className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                     Popular
                   </div>
                 )}
 
                 {/* Category label */}
-                <div className="absolute top-3 left-3 z-30">
+                <div className="absolute top-2 left-2 z-30">
                   <span 
-                    className="text-xs font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md"
+                    className="text-[10px] sm:text-xs font-bold px-2 py-1 rounded-full shadow-lg backdrop-blur-md"
                     style={{
                       background: `rgba(0,0,0,0.6)`,
                       color: meta.accent,
@@ -170,10 +170,11 @@ const CoursesSection = () => {
                 </div>
 
                 {/* Poster Thumbnail */}
-                <div className="relative w-full">
+                <div className="relative w-full aspect-[4/3] sm:aspect-video">
                   <img
                     src={c.image}
-                    className="w-full h-48 object-cover rounded-xl"
+                    loading="lazy"
+                    className="w-full h-full object-cover rounded-t-xl"
                   />
                   
                   {/* Overlay for readability - ~25% */}
@@ -197,27 +198,24 @@ const CoursesSection = () => {
                 </div>
 
                 {/* Content Body */}
-                <div className="p-5">
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="text-lg font-display font-bold text-foreground group-hover:text-primary transition-colors leading-tight line-clamp-1">
+                <div className="p-3 sm:p-5 flex-grow">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-3 mb-2">
+                    <h3 className="text-sm sm:text-lg font-display font-bold text-foreground group-hover:text-primary transition-colors leading-tight line-clamp-2">
                       {c.title}
                     </h3>
-                    <div className="text-right flex-shrink-0">
-                      <span className="text-lg font-display font-bold" style={{ color: meta.accent }}>
+                    <div className="text-left sm:text-right flex-shrink-0">
+                      <span className="text-sm sm:text-lg font-display font-bold" style={{ color: meta.accent }}>
                         {c.price}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground mb-1">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-xs text-muted-foreground mb-1">
                     <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />{c.duration}
+                      <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5" />{c.duration}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Users className="h-3.5 w-3.5" />{c.students}
-                    </span>
-                    <span className="flex items-center gap-1 text-yellow-500">
-                      <Star className="h-3.5 w-3.5 fill-yellow-500" />4.8
+                      <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5" />{c.students}
                     </span>
                   </div>
                 </div>

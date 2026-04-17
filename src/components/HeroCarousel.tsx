@@ -131,17 +131,17 @@ const HeroCarousel = ({ onEnroll }: { onEnroll?: () => void }) => {
         }}
       />
 
-      {/* Floating blobs */}
+      {/* Floating blobs - Hidden on mobile for performance */}
       <motion.div
         animate={{ x: [0, 30, -10, 0], y: [0, -20, 15, 0] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl opacity-20"
+        className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl opacity-20 hidden md:block"
         style={{ background: slide.accentColor }}
       />
       <motion.div
         animate={{ x: [0, -25, 20, 0], y: [0, 20, -25, 0] }}
         transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-1/4 left-1/3 w-48 h-48 rounded-full blur-3xl opacity-15"
+        className="absolute bottom-1/4 left-1/3 w-48 h-48 rounded-full blur-3xl opacity-15 hidden md:block"
         style={{ background: slide.accentColor }}
       />
 

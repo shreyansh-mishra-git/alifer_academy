@@ -45,7 +45,7 @@ function getRecommendation(answers: UserAnswers): string {
 
   if (exam === "UPSC") {
     if (isLowBudget)
-      return "💡 For UPSC on a tight budget, start with our **UPSC Foundation** at ₹4,999 — the best value for complete prelims + mains coverage. We also offer EMI options!";
+      return "💡 For UPSC on a tight budget, start with our **UPSC Foundation** at ₹1,999 — the best value for complete prelims + mains coverage. We also offer EMI options!";
     if (isHighBudget || isMedBudget)
       return "🎯 Perfect match! Our **UPSC Foundation** at ₹4,999 (44% off ₹8,999) covers full prelims, mains & current affairs with live sessions.";
     return "🎯 I recommend our **UPSC Foundation** at ₹4,999 (44% off). Covers prelims, mains & current affairs!";
@@ -53,15 +53,15 @@ function getRecommendation(answers: UserAnswers): string {
 
   if (exam === "NDA") {
     if (level === "Beginner")
-      return "🎖️ For NDA beginners, our **NDA Crash Course** at ₹2,999 is perfect — clear concept-building for Math & GAT, plus SSB interview prep.";
+      return "🎖️ For NDA beginners, our **NDA Crash Course** at ₹1,999 is perfect — clear concept-building for Math & GAT, plus SSB interview prep.";
     if (level === "Advanced")
-      return "🎖️ Since you're advanced, try our **NDA Crash Course** at ₹2,999 — focused revision with previous year papers and full mock test analysis.";
-    return "🎖️ Great fit: **NDA Crash Course** at ₹2,999 (45% off). Full Math & GAT syllabus with mock tests!";
+      return "🎖️ Since you're advanced, try our **NDA Crash Course** at ₹4,999 — focused revision with previous year papers and full mock test analysis.";
+    return "🎖️ Great fit: **NDA Crash Course** at ₹4,999 (45% off). Full Math & GAT syllabus with mock tests!";
   }
 
   if (exam === "GATE") {
     if (level === "Beginner")
-      return "💻 For GATE beginners: **GATE CSE Mastery** at ₹5,499 — starts from fundamentals with 10K+ practice problems and live doubt sessions.";
+      return "💻 For GATE beginners: **GATE CSE Mastery** at ₹1,499 — starts from fundamentals with 10K+ practice problems and live doubt sessions.";
     if (level === "Advanced")
       return "💻 For GATE advanced learners: **GATE CSE Mastery** at ₹5,499 — intensive PYQ solving, topic-wise deep dive, and rank prediction tests.";
     return "💻 I recommend **GATE CSE Mastery** at ₹5,499 (45% off). Complete CS curriculum with PYQ solutions!";
@@ -235,11 +235,10 @@ const ChatbotWidget = () => {
                     </div>
                   )}
                   <div
-                    className={`max-w-[78%] text-sm px-3.5 py-2.5 rounded-2xl leading-relaxed whitespace-pre-line ${
-                      m.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-br-sm"
-                        : "bg-muted text-foreground rounded-bl-sm"
-                    }`}
+                    className={`max-w-[78%] text-sm px-3.5 py-2.5 rounded-2xl leading-relaxed whitespace-pre-line ${m.role === "user"
+                      ? "bg-primary text-primary-foreground rounded-br-sm"
+                      : "bg-muted text-foreground rounded-bl-sm"
+                      }`}
                   >
                     {m.text}
                   </div>
@@ -324,9 +323,8 @@ const ChatbotWidget = () => {
                 {flow.map((_, i) => (
                   <div
                     key={i}
-                    className={`h-1 rounded-full transition-all duration-300 ${
-                      i < step ? "w-4 bg-primary" : i === step && !done ? "w-4 bg-primary/50" : "w-2 bg-border"
-                    }`}
+                    className={`h-1 rounded-full transition-all duration-300 ${i < step ? "w-4 bg-primary" : i === step && !done ? "w-4 bg-primary/50" : "w-2 bg-border"
+                      }`}
                   />
                 ))}
               </div>

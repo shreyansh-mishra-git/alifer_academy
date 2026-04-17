@@ -189,13 +189,13 @@ const VideoCard = ({
         </div>
 
         {/* ── Card Footer ── */}
-        <div className="p-4">
-          <h3 className="text-sm font-display font-semibold text-foreground group-hover:text-primary transition-colors leading-tight line-clamp-2 mb-3">
+        <div className="p-3 sm:p-4">
+          <h3 className="text-xs sm:text-sm font-display font-semibold text-foreground group-hover:text-primary transition-colors leading-tight line-clamp-2 mb-2 sm:mb-3">
             {video.title}
           </h3>
 
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">Alifer Sir</span>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] sm:text-xs text-muted-foreground truncate">Alifer Sir</span>
 
             <motion.a
               href={`https://www.youtube.com/watch?v=${video.videoId}`}
@@ -203,9 +203,9 @@ const VideoCard = ({
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
               whileHover={{ scale: 1.06 }}
-              className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 transition-colors"
+              className="flex items-center gap-1 text-[10px] sm:text-xs text-red-500 font-medium hover:text-red-400 transition-colors flex-shrink-0"
             >
-              <ExternalLink className="h-3 w-3" />
+              <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               YouTube
             </motion.a>
           </div>
@@ -254,7 +254,7 @@ const DemoVideoSection = () => {
 
         {/* ── 4-column Grid ── */}
         {/* Desktop: 4 columns | Tablet: 2 | Mobile: 1 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
           {demoVideos.map((video, i) => (
             <VideoCard
               key={video.id}

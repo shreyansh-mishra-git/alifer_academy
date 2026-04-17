@@ -35,7 +35,9 @@ const Index = () => {
       <Navbar onGetStarted={() => setSignInOpen(true)} />
 
       {/* 1. Full-width hero carousel — above everything */}
-      <HeroCarousel onEnroll={() => setSignInOpen(true)} />
+      <div id="home">
+        <HeroCarousel onEnroll={() => setSignInOpen(true)} />
+      </div>
 
       {/* 2. Original hero section (stats + CTAs) */}
       <HeroSection onExplore={scrollToCourses} onGetStarted={() => setSignInOpen(true)} />

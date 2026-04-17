@@ -57,9 +57,9 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <a href="#" className="flex items-center gap-2 group">
           <img
-            src={logoImg}
+            src="/logo.png"
             alt="Alifer Academy"
-            className="h-10 w-10 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all"
+            className="h-10 w-10 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all border border-primary/10"
           />
           <span className="text-xl font-display font-bold gradient-text">Alifer Academy</span>
         </a>
@@ -160,18 +160,19 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden bg-background/90 backdrop-blur-xl border-t border-border/30"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-2xl border-b border-border/30 shadow-2xl"
           >
-            <div className="flex flex-col gap-1 p-4">
+            <div className="flex flex-col gap-2 p-6">
               {links.map((l) => (
                 <a
                   key={l.label}
                   href={l.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`px-3 py-2 rounded-lg transition-colors ${
+                  className={`px-4 py-3 rounded-xl transition-all font-medium ${
                     activeSection === l.href.slice(1)
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -182,7 +183,7 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
               ))}
               <Button
                 onClick={() => { onGetStarted(); setMobileOpen(false); }}
-                className="mt-2 bg-primary text-primary-foreground"
+                className="mt-4 bg-primary text-primary-foreground py-6 text-base font-bold shadow-lg shadow-primary/30"
               >
                 Get Started
               </Button>

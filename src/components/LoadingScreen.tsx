@@ -24,9 +24,9 @@ const LoadingScreen = ({ show }: LoadingScreenProps) => (
           className="relative z-10 flex flex-col items-center gap-6"
         >
           <motion.img
-            src={logoImg}
+            src="/logo.png"
             alt="Alifer Academy"
-            className="w-20 h-20 rounded-full border-2 border-primary/30"
+            className="w-32 h-32 rounded-full border-4 border-primary/30 object-cover shadow-2xl"
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           />
