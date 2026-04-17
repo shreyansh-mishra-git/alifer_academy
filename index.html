@@ -1,19 +1,31 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Alifer Academy</title>
-    <link rel="icon" href="/logo.png" />
 
-    <meta property="og:title" content="Alifer Academy" />
-    <meta property="og:description" content="Alifer Academy Project" />
-    <meta property="og:type" content="website" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <title>Alifer Academy</title>
+
+  <!-- ✅ Favicon (Important Fix) -->
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="shortcut icon" href="/logo.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+
+  <!-- Optional: Prevent caching issue -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Alifer Academy" />
+  <meta property="og:description" content="Alifer Academy Project" />
+  <meta property="og:type" content="website" />
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
