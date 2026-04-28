@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, LayoutDashboard, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
-import logoImg from "@/assets/alifer-logo.jpeg";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NavbarProps {
   onGetStarted: () => void;
@@ -14,6 +15,8 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const { theme, toggleTheme } = useTheme();
+  const { user, isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
 
   const links = [
     { label: "Insights", href: "#insights" },
@@ -122,13 +125,42 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
             </AnimatePresence>
           </motion.button>
 
-          <Button
-            onClick={onGetStarted}
-            size="sm"
-            className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
-          >
-            Get Started
-          </Button>
+          {isLoggedIn ? (
+            <div className="flex items-center gap-2 ml-2">
+              {user?.isAdmin && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/admin')}
+                  className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+                >
+                  <Shield className="h-3.5 w-3.5" /> Admin
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/dashboard')}
+                className="gap-1.5"
+              >
+                <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard
+              </Button>
+              <div
+                onClick={() => navigate('/dashboard')}
+                className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm cursor-pointer hover:bg-primary/30 transition-colors"
+              >
+                {user?.name?.charAt(0).toUpperCase()}
+              </div>
+            </div>
+          ) : (
+            <Button
+              onClick={onGetStarted}
+              size="sm"
+              className="ml-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+            >
+              Get Started
+            </Button>
+          )}
         </div>
 
         <div className="flex md:hidden items-center gap-2">
@@ -181,12 +213,21 @@ const Navbar = ({ onGetStarted }: NavbarProps) => {
                   {l.label}
                 </a>
               ))}
-              <Button
-                onClick={() => { onGetStarted(); setMobileOpen(false); }}
-                className="mt-4 bg-primary text-primary-foreground py-6 text-base font-bold shadow-lg shadow-primary/30"
-              >
-                Get Started
-              </Button>
+              {isLoggedIn ? (
+                <Button
+                  onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
+                  className="mt-4 bg-primary text-primary-foreground py-6 text-base font-bold shadow-lg shadow-primary/30"
+                >
+                  My Dashboard
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => { onGetStarted(); setMobileOpen(false); }}
+                  className="mt-4 bg-primary text-primary-foreground py-6 text-base font-bold shadow-lg shadow-primary/30"
+                >
+                  Get Started
+                </Button>
+              )}
             </div>
           </motion.div>
         )}

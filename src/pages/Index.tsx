@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroCarousel from "@/components/HeroCarousel";
 import HeroSection from "@/components/HeroSection";
-import SignInModal from "@/components/SignInModal";
+import AuthModal from "@/components/AuthModal";
 import InfoSection from "@/components/InfoSection";
 import DemoVideoSection from "@/components/DemoVideoSection";
 import CoursesSection from "@/components/CoursesSection";
@@ -15,10 +16,13 @@ import PostersCarousel from "@/components/PostersCarousel";
 import FooterSection from "@/components/FooterSection";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import LoadingScreen from "@/components/LoadingScreen";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const [signInOpen, setSignInOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1800);
@@ -29,18 +33,26 @@ const Index = () => {
     document.getElementById("courses")?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleGetStarted = () => {
+    if (isLoggedIn) {
+      navigate('/dashboard');
+    } else {
+      setAuthOpen(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <LoadingScreen show={loading} />
-      <Navbar onGetStarted={() => setSignInOpen(true)} />
+      <Navbar onGetStarted={handleGetStarted} />
 
       {/* 1. Full-width hero carousel — above everything */}
       <div id="home">
-        <HeroCarousel onEnroll={() => setSignInOpen(true)} />
+        <HeroCarousel onEnroll={handleGetStarted} />
       </div>
 
       {/* 2. Original hero section (stats + CTAs) */}
-      <HeroSection onExplore={scrollToCourses} onGetStarted={() => setSignInOpen(true)} />
+      <HeroSection onExplore={scrollToCourses} onGetStarted={handleGetStarted} />
 
       {/* 3. Info / Blog posts */}
       <InfoSection />
@@ -49,7 +61,7 @@ const Index = () => {
       <DemoVideoSection />
 
       {/* 5. Courses */}
-      <CoursesSection />
+      <CoursesSection onAuthRequired={() => setAuthOpen(true)} />
 
       {/* 6. Teacher section BELOW courses (moved from top) */}
       <TeacherSection />
@@ -73,7 +85,7 @@ const Index = () => {
       <FooterSection />
 
       <ChatbotWidget />
-      <SignInModal open={signInOpen} onClose={() => setSignInOpen(false)} />
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </div>
   );
 };
