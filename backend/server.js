@@ -1,23 +1,5 @@
-// ===== LOAD ENV (SAFE + RELIABLE) =====
-const path = require('path');
-const dotenv = require('dotenv');
-
-// Load .env
-const envPath = path.join(__dirname, '.env');
-dotenv.config({ path: envPath });
-
-// ===== DEBUG (STEP 1: CHECK EVERYTHING) =====
-console.log("📁 ENV FILE PATH:", envPath);
-console.log("🧪 ALL ENV:", process.env);
-
-// ===== DEBUG (STEP 2: CHECK MONGO_URI) =====
-if (!process.env.MONGO_URI) {
-  console.error("❌ MONGO_URI is UNDEFINED");
-  console.error("👉 Fix: .env file issue (location / name / format / encoding)");
-  process.exit(1);
-} else {
-  console.log("🔑 ENV CHECK — MONGO_URI: ✅ Loaded");
-}
+// ===== LOAD ENV =====
+require('dotenv').config();
 
 // ===== IMPORTS =====
 const express = require('express');
@@ -29,18 +11,40 @@ const courseRoutes = require('./routes/courses');
 const paymentRoutes = require('./routes/payment');
 const adminRoutes = require('./routes/admin');
 
-// ===== START SERVER ONLY AFTER DB CONNECT =====
+const { protect, adminOnly } = require('./middleware/auth');
+const Payment = require('./models/Payment');
+const User = require('./models/User');
+const Course = require('./models/Course');
+
+// ===== START SERVER =====
 const startServer = async () => {
   try {
     await connectDB();
 
     const app = express();
 
-    // ===== MIDDLEWARE =====
+    // ===== CORS FIX (IMPORTANT) =====
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'https://alifer-academy.vercel.app' // ✅ YOUR FRONTEND
+    ];
+
     app.use(cors({
-      origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080'],
+      origin: function (origin, callback) {
+        // allow requests with no origin (mobile apps, postman)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
       credentials: true,
     }));
+
     app.use(express.json());
 
     // ===== ROUTES =====
@@ -50,24 +54,30 @@ const startServer = async () => {
     app.use('/api/enroll', paymentRoutes);
     app.use('/api/admin', adminRoutes);
 
-    // Specific secret dashboard route for Requirement
-    const { protect, adminOnly } = require('./middleware/auth');
-    const Payment = require('./models/Payment');
-    const User = require('./models/User');
-    const Course = require('./models/Course');
-    
+    // ===== ADMIN DASHBOARD =====
     app.get('/api/admin-dashboard-secret', protect, adminOnly, async (req, res) => {
       try {
         const totalUsers = await User.countDocuments({ isAdmin: false });
         const totalCourses = await Course.countDocuments();
         const pendingPayments = await Payment.countDocuments({ status: 'pending' });
         const approvedPayments = await Payment.countDocuments({ status: 'approved' });
+
         const recentPayments = await Payment.find({ status: 'pending' })
           .populate('userId', 'name email phone')
           .populate('courseId', 'title price')
-          .sort({ createdAt: -1 }).limit(10);
-        res.json({ totalUsers, totalCourses, pendingPayments, approvedPayments, recentPayments });
-      } catch (e) { res.status(500).json({ message: 'Error' }); }
+          .sort({ createdAt: -1 })
+          .limit(10);
+
+        res.json({
+          totalUsers,
+          totalCourses,
+          pendingPayments,
+          approvedPayments,
+          recentPayments
+        });
+      } catch (e) {
+        res.status(500).json({ message: 'Error loading dashboard' });
+      }
     });
 
     // ===== HEALTH CHECK =====
@@ -82,14 +92,14 @@ const startServer = async () => {
 
     // ===== ERROR HANDLER =====
     app.use((err, req, res, next) => {
-      console.error("🔥 ERROR:", err.stack);
-      res.status(500).json({ message: 'Internal server error' });
+      console.error(err.stack);
+      res.status(500).json({ message: err.message || 'Internal server error' });
     });
 
-    // ===== START SERVER =====
+    // ===== START =====
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
 
   } catch (error) {
