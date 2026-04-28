@@ -1,16 +1,15 @@
-const API_URL = "http://localhost:5000";
+const API_URL = "https://alifer-academy.onrender.com";
 
 export const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("token");
 
-  // Debug log as requested
-  console.log("Sending token:", localStorage.getItem("token"));
+  console.log("Sending token:", token);
 
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: token ? `Bearer ${token}` : "",
       ...(options.headers || {})
     }
   });
@@ -20,7 +19,7 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
   return data;
 };
 
-// ─── Auth ────────────────────────────────────────────────────────────────────
+// ─── Auth ─────────────────────────────────────────────────
 export const apiSignup = async (payload: {
   name: string; email: string; age: number; phone: string; password: string;
 }) => {
@@ -41,7 +40,7 @@ export const apiGetMe = async () => {
   return fetchWithAuth('/api/auth/me');
 };
 
-// ─── Courses ─────────────────────────────────────────────────────────────────
+// ─── Courses ──────────────────────────────────────────────
 export const apiGetCourses = async () => {
   return fetchWithAuth('/api/courses');
 };
@@ -57,7 +56,7 @@ export const apiMarkVideoComplete = async (courseId: string, videoId: string) =>
   });
 };
 
-// ─── Payments ────────────────────────────────────────────────────────────────
+// ─── Payments ─────────────────────────────────────────────
 export const apiRequestPayment = async (courseId: string, utrNumber?: string) => {
   return fetchWithAuth('/api/enroll/request', {
     method: 'POST',
@@ -69,7 +68,7 @@ export const apiGetMyPayments = async () => {
   return fetchWithAuth('/api/payment/my');
 };
 
-// ─── Admin ───────────────────────────────────────────────────────────────────
+// ─── Admin ────────────────────────────────────────────────
 export const apiAdminDashboard = async () => {
   return fetchWithAuth('/api/admin/dashboard');
 };
