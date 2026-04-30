@@ -14,7 +14,7 @@ import poster7 from "@/assets/poster7.jpg";
 import poster8 from "@/assets/poster8.jpg";
 import poster9 from "@/assets/poster9.jpg";
 
-const FALLBACK_IMAGES = [upsc2, nda2, gate2, poster7, poster8, poster9];
+const FALLBACK_IMAGES = [poster8, nda2, gate2, poster7, poster8, poster9];
 
 interface CourseCard {
   _id: string;
@@ -45,6 +45,21 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<CourseCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 11, minutes: 45, seconds: 59 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        let { days, hours, minutes, seconds } = prev;
+        if (seconds > 0) return { ...prev, seconds: seconds - 1 };
+        if (minutes > 0) return { ...prev, minutes: minutes - 1, seconds: 59 };
+        if (hours > 0) return { ...prev, hours: hours - 1, minutes: 59, seconds: 59 };
+        if (days > 0) return { ...prev, days: days - 1, hours: 23, minutes: 59, seconds: 59 };
+        return prev;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     loadCourses();
@@ -149,9 +164,13 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                         <Play className="h-2.5 w-2.5 fill-current" /> {freeVideos} free preview
                       </div>
                     )}
+                    {/* Running Timer */}
+                    <div className="absolute bottom-2 right-2 bg-red-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-lg">
+                      <Clock className="h-2 w-2 animate-spin" /> ENDS SOON: {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
+                    </div>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-sm md:text-base mb-2">{course.title}</h3>
+                    <h3 className="font-semibold text-sm md:text-base mb-2">Unit 1 Solution (Pandava 3.0)</h3>
                     <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{course.description}</p>
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-3">
                       <span className="flex items-center gap-1 font-bold"><Clock className="h-2.5 w-2.5" />Access: 30 Days</span>
@@ -175,21 +194,18 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   key={`${course._id}-dummy1`}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  className="bg-white dark:bg-zinc-900 rounded-xl shadow-md overflow-hidden opacity-80 grayscale pointer-events-none relative"
+                  className="bg-white dark:bg-zinc-900 rounded-xl shadow-md overflow-hidden relative"
                 >
-                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 text-center p-4">
-                    <div className="bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full mb-2 animate-pulse">
+                  <div className="absolute bottom-0 inset-x-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm py-2">
+                    <div className="bg-red-600 text-white text-xs font-bold px-5 py-2 rounded-full animate-pulse shadow-lg">
                       BATCH FULL
                     </div>
-                    <p className="text-white text-[10px] font-medium leading-tight">
-                      This batch is full<br/>Check the other batches
-                    </p>
                   </div>
-                  <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative blur-[2px]">
+                  <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative">
                     <img src={imgSrc} className="w-full h-full object-cover" />
                   </div>
-                  <div className="p-4 blur-[1px]">
-                    <h3 className="font-semibold text-sm mb-2 opacity-50">{course.title} (Batch A)</h3>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-sm mb-2 text-muted-foreground">{course.title} (Batch Pandava 2.1)</h3>
                     <div className="flex items-center justify-between text-[10px] mb-3 opacity-30 font-bold">
                       <span>Access: 30 Days</span>
                       <span>100+ Enrolled</span>
@@ -198,7 +214,7 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                       <span>₹{course.price}/month</span>
                       <span className="line-through">₹{course.originalPrice}</span>
                     </div>
-                    <Button disabled className="w-full text-xs">Batch Full</Button>
+                    <Button disabled className="w-full py-6 text-sm font-bold bg-muted/80 uppercase tracking-widest shadow-inner">Batch Full</Button>
                   </div>
                 </motion.div>,
 
@@ -207,21 +223,18 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   key={`${course._id}-dummy2`}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  className="bg-white dark:bg-zinc-900 rounded-xl shadow-md overflow-hidden opacity-80 grayscale pointer-events-none relative"
+                  className="bg-white dark:bg-zinc-900 rounded-xl shadow-md overflow-hidden relative"
                 >
-                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 text-center p-4">
-                    <div className="bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full mb-2 animate-pulse">
+                  <div className="absolute bottom-0 inset-x-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm py-2">
+                    <div className="bg-red-600 text-white text-xs font-bold px-5 py-2 rounded-full animate-pulse shadow-lg">
                       BATCH FULL
                     </div>
-                    <p className="text-white text-[10px] font-medium leading-tight">
-                      This batch is full<br/>Check the other batches
-                    </p>
                   </div>
-                  <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative blur-[2px]">
+                  <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative">
                     <img src={imgSrc} className="w-full h-full object-cover" />
                   </div>
-                  <div className="p-4 blur-[1px]">
-                    <h3 className="font-semibold text-sm mb-2 opacity-50">{course.title} (Batch B)</h3>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-sm mb-2 text-muted-foreground">{course.title} (Batch B)</h3>
                     <div className="flex items-center justify-between text-[10px] mb-3 opacity-30 font-bold">
                       <span>Access: 30 Days</span>
                       <span>100+ Enrolled</span>
@@ -230,7 +243,7 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                       <span>₹{course.price}/month</span>
                       <span className="line-through">₹{course.originalPrice}</span>
                     </div>
-                    <Button disabled className="w-full text-xs">Batch Full</Button>
+                    <Button disabled className="w-full py-6 text-sm font-bold bg-muted/80 uppercase tracking-widest shadow-inner">Batch Full</Button>
                   </div>
                 </motion.div>
               ];

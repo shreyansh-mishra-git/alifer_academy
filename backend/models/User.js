@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
     hoursStudied: { type: Number, default: 0 },
     completedVideos: [{ type: String }], // stores videoIds
     isAdmin: { type: Boolean, default: false },
+    activeSessionId: { type: String, default: null },
   },
   { timestamps: true }
 );

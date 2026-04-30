@@ -4,6 +4,8 @@ import {
   Globe, BookOpen, Video, Download, CheckCircle, ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import poster8 from "@/assets/poster8.jpg";
+
 
 interface Course {
   title: string;
@@ -96,48 +98,54 @@ const CourseDetailModal = ({ course, onClose }: CourseDetailModalProps) => {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Banner */}
-          <div className={`relative bg-gradient-to-br ${style.bg} p-8 overflow-hidden`}>
-            <div className="absolute inset-0 opacity-20"
-              style={{
-                backgroundImage: `radial-gradient(circle at 70% 50%, ${style.accent}50 0%, transparent 60%)`,
-              }}
+          <div className="relative p-8 overflow-hidden min-h-[240px] flex flex-col justify-end">
+            {/* Background Image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
+              style={{ backgroundImage: `url(${course.image || poster8})` }}
             />
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
-            >
-              <X size={18} />
-            </button>
-            {course.popular && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-white text-xs font-semibold mb-4">
-                <Flame className="h-3 w-3" style={{ color: style.accent }} /> Popular Course
-              </div>
-            )}
-            <div className="flex items-start gap-4">
-              <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-                style={{ background: `${style.accent}20`, border: `1px solid ${style.accent}40` }}
+            {/* Overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent`} />
+
+            <div className="relative z-10">
+              <button
+                onClick={onClose}
+                className="absolute -top-4 -right-4 w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
               >
-                {style.icon}
-              </div>
-              <div className="text-white">
-                <div className="text-xs font-bold tracking-widest uppercase opacity-70 mb-1" style={{ color: style.accent }}>
-                  {course.category} Course
+                <X size={18} />
+              </button>
+
+              {course.popular && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-white text-xs font-semibold mb-4">
+                  <Flame className="h-3 w-3 text-orange-400" /> Popular Course
                 </div>
-                <h2 className="text-2xl md:text-3xl font-display font-bold mb-2">{course.title}</h2>
-                <p className="text-white/70 text-sm max-w-md">{course.desc}</p>
+              )}
+
+              <div className="flex items-start gap-4">
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 bg-white/10 backdrop-blur-md border border-white/20"
+                >
+                  {style.icon}
+                </div>
+                <div className="text-white">
+                  <div className="text-xs font-bold tracking-widest uppercase opacity-80 mb-1" style={{ color: style.accent }}>
+                    {course.category} Course
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-display font-bold mb-2 drop-shadow-lg">{course.title}</h2>
+                  <p className="text-white/80 text-sm max-w-md drop-shadow-md">{course.desc}</p>
+                </div>
               </div>
-            </div>
-            {/* Price highlight */}
-            <div className="mt-6 flex items-center gap-4">
-              <span className="text-3xl font-display font-bold text-white">{course.price}</span>
-              <span className="text-lg text-white/40 line-through">{course.originalPrice}</span>
-              <span
-                className="px-3 py-1 rounded-full text-xs font-bold"
-                style={{ background: `${style.accent}25`, color: style.accent, border: `1px solid ${style.accent}40` }}
-              >
-                Save {Math.round((1 - parseInt(course.price.replace(/\D/g, "")) / parseInt(course.originalPrice.replace(/\D/g, ""))) * 100)}%
-              </span>
+
+              {/* Price highlight */}
+              <div className="mt-6 flex items-center gap-4">
+                <span className="text-3xl font-display font-bold text-white drop-shadow-lg">{course.price}</span>
+                <span className="text-lg text-white/40 line-through">{course.originalPrice}</span>
+                <span
+                  className="px-3 py-1 rounded-full text-xs font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white"
+                >
+                  Save {Math.round((1 - parseInt(course.price.replace(/\D/g, "")) / parseInt(course.originalPrice.replace(/\D/g, ""))) * 100)}%
+                </span>
+              </div>
             </div>
           </div>
 
@@ -191,15 +199,13 @@ const CourseDetailModal = ({ course, onClose }: CourseDetailModalProps) => {
                 {lectures.map((lecture, i) => (
                   <div
                     key={i}
-                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                      lecture.locked
+                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${lecture.locked
                         ? "border-border/20 bg-muted/10 opacity-60"
                         : "border-border/40 bg-muted/20 hover:bg-muted/40 cursor-pointer"
-                    }`}
+                      }`}
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      lecture.locked ? "bg-muted/50" : "bg-primary/10"
-                    }`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${lecture.locked ? "bg-muted/50" : "bg-primary/10"
+                      }`}>
                       {lecture.locked ? (
                         <Lock className="h-4 w-4 text-muted-foreground" />
                       ) : (
@@ -237,15 +243,13 @@ const CourseDetailModal = ({ course, onClose }: CourseDetailModalProps) => {
                 {notes.map((note, i) => (
                   <div
                     key={i}
-                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                      note.locked
+                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${note.locked
                         ? "border-border/20 bg-muted/10 opacity-60"
                         : "border-border/40 bg-muted/20 hover:bg-muted/40 cursor-pointer"
-                    }`}
+                      }`}
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      note.locked ? "bg-muted/50" : "bg-secondary/10"
-                    }`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${note.locked ? "bg-muted/50" : "bg-secondary/10"
+                      }`}>
                       {note.locked ? (
                         <Lock className="h-4 w-4 text-muted-foreground" />
                       ) : (

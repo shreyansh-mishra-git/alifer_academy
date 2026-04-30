@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import poster8 from "@/assets/poster8.jpg";
+
 import { Button } from "@/components/ui/button";
 
 interface Slide {
@@ -14,20 +16,22 @@ interface Slide {
   accentColor: string;
   icon: string;
   features: string[];
+  image?: string;
 }
 
 const slides: Slide[] = [
   {
     id: 1,
-    exam: "UPSC",
-    title: "Civil Services 2025",
-    subtitle: "Master prelims to interview with India's most trusted UPSC faculty",
-    tag: "🔥 Most Popular",
-    cta: "Explore Course",
-    gradient: "from-blue-900 via-indigo-900 to-purple-900",
-    accentColor: "#60a5fa",
-    icon: "⚖️",
-    features: ["Prelims + Mains + Interview", "Daily Current Affairs", "500+ Mock Tests"],
+    exam: "New Batch",
+    title: "Enrolling Now for 2025",
+    subtitle: "Secure your future with Alifer Academy's premium coaching",
+    tag: "✨ New Arrival",
+    cta: "Join Now",
+    gradient: "from-slate-900 via-gray-900 to-black",
+    accentColor: "#fbbf24",
+    icon: "🌟",
+    features: ["Expert Faculty Support", "Interactive Live Classes", "Premium Study Material"],
+    image: poster8,
   },
   {
     id: 2,
@@ -77,6 +81,58 @@ const slides: Slide[] = [
     icon: "✈️",
     features: ["Written Exam Strategy", "Physical Fitness Guide", "SSB GD & Interview"],
   },
+  {
+    id: 6,
+    exam: "UNIT 2",
+    title: "Unit 2 Mastery",
+    subtitle: "In-depth video solutions and practice material for Unit 2 modules",
+    tag: "📚 Academic Excellence",
+    cta: "Join Unit 2",
+    gradient: "from-blue-900 via-indigo-900 to-purple-900",
+    accentColor: "#60a5fa",
+    icon: "📖",
+    features: ["Step-by-step Solutions", "Detailed Concept Notes", "Unit-wise Practice Tests"],
+    image: poster8,
+  },
+  {
+    id: 7,
+    exam: "UNIT 1",
+    title: "Unit 1 Solutions",
+    subtitle: "Topic-wise Explanation • Pandava 3.0",
+    tag: "⚡ High Velocity",
+    cta: "Join Unit 1",
+    gradient: "from-amber-900 via-orange-900 to-yellow-900",
+    accentColor: "#fbbf24",
+    icon: "🏗️",
+    features: ["Problem Solving Mastery", "Recorded Video Lectures", "Doubt Clearing Support"],
+    image: poster8,
+  },
+  {
+    id: 8,
+    exam: "UNIT 4",
+    title: "Unit 4 Special",
+    subtitle: "Master Unit 4 concepts with our premium curriculum",
+    tag: "🎯 Target Achieved",
+    cta: "Join Unit 4",
+    gradient: "from-emerald-900 via-green-900 to-teal-900",
+    accentColor: "#34d399",
+    icon: "🔭",
+    features: ["Advanced Topic Coverage", "Mock Test Series", "PDF Resource Library"],
+    image: poster8,
+  },
+  {
+    id: 9,
+    exam: "UNIT 5",
+    title: "Unit 5 Intensive",
+    subtitle: "The ultimate guide to acing Unit 5 topics",
+    tag: "🚀 Fast Track",
+    cta: "Join Unit 5",
+    gradient: "from-rose-900 via-red-900 to-orange-900",
+    accentColor: "#f87171",
+    icon: "🛸",
+    features: ["Intensive Revision", "Previous Year Solutions", "Expert Faculty Mentoring"],
+    image: poster8,
+  },
 ];
 
 const HeroCarousel = ({ onEnroll }: { onEnroll?: () => void }) => {
@@ -112,8 +168,20 @@ const HeroCarousel = ({ onEnroll }: { onEnroll?: () => void }) => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
-          className={`absolute inset-0 bg-gradient-to-br ${slide.gradient}`}
-        />
+          className="absolute inset-0 overflow-hidden"
+        >
+          {slide.image ? (
+            <img 
+              src={slide.image} 
+              alt={slide.title}
+              className="w-full h-full object-cover opacity-40 scale-110" 
+            />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br ${slide.gradient}`} />
+          )}
+          {/* Default gradient overlay to ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+        </motion.div>
       </AnimatePresence>
 
       {/* Animated mesh overlay */}

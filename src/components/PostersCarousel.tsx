@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import poster8 from "@/assets/poster8.jpg";
+
 
 const posters = [
   { title: "UPSC 2025 Batch Open", subtitle: "Early bird discount - 30% off!", gradient: "from-primary/20 to-blue-600/20" },
   { title: "NDA Crash Course", subtitle: "Start your defence journey today", gradient: "from-secondary/20 to-orange-600/20" },
   { title: "Free GATE Webinar", subtitle: "This Saturday at 7PM", gradient: "from-accent/20 to-purple-600/20" },
   { title: "Scholarship Test", subtitle: "Win up to 100% fee waiver", gradient: "from-emerald-500/20 to-teal-600/20" },
+  { title: "New Batch Launch", subtitle: "Join our most successful preparation program", image: poster8 },
 ];
 
 const PostersCarousel = () => {
@@ -41,10 +44,22 @@ const PostersCarousel = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -80 }}
                 transition={{ duration: 0.4 }}
-                className={`glass-card aspect-[2/1] flex flex-col items-center justify-center text-center p-8 bg-gradient-to-br ${posters[current].gradient}`}
+                className={`glass-card aspect-[2/1] flex flex-col items-center justify-center text-center p-8 overflow-hidden relative ${!posters[current].image ? `bg-gradient-to-br ${posters[current].gradient}` : 'bg-black'}`}
               >
-                <h3 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">{posters[current].title}</h3>
-                <p className="text-muted-foreground">{posters[current].subtitle}</p>
+                {posters[current].image && (
+                  <>
+                    <img 
+                      src={posters[current].image} 
+                      alt={posters[current].title}
+                      className="absolute inset-0 w-full h-full object-cover opacity-60" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                  </>
+                )}
+                <div className="relative z-10">
+                  <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-2 drop-shadow-lg">{posters[current].title}</h3>
+                  <p className="text-white/80 drop-shadow-md">{posters[current].subtitle}</p>
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>

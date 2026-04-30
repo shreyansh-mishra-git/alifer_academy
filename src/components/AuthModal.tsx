@@ -13,32 +13,32 @@ interface AuthModalProps {
   defaultTab?: 'login' | 'signup';
 }
 
+// ─── Main Auth Modal ──────────────────────────────────────────────────────────
 const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
   const { login } = useAuth();
   const [tab, setTab] = useState<'login' | 'signup'>(defaultTab);
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
-  // Login state
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  // Shared state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  // Signup state
-  const [signupData, setSignupData] = useState({
-    name: '', email: '', age: '', phone: '', password: '',
-  });
+  // Signup-only state
+  const [signupData, setSignupData] = useState({ name: '', age: '', phone: '' });
 
+  // ── Handlers ──────────────────────────────
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loginEmail || !loginPassword) return toast.error('Please fill all fields');
+    if (!email || !password) return toast.error('Please fill all fields');
     setLoading(true);
     try {
-      const data = await apiLogin(loginEmail, loginPassword);
+      const data = await apiLogin(email, password);
       login(data);
       toast.success(`Welcome back, ${data.name}! 🎉`);
       onClose();
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Login failed');
+    } catch (err: any) {
+      toast.error(err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -46,18 +46,19 @@ const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { name, email, age, phone, password } = signupData;
-    if (!name || !email || !age || !phone || !password) return toast.error('All fields are required');
-    if (Number(age) < 10 || Number(age) > 100) return toast.error('Enter a valid age');
-    if (password.length < 6) return toast.error('Password must be at least 6 characters');
+    const { name, age, phone } = signupData;
+    if (!name || !email || !age || !phone || !password)
+      return toast.error('All fields are required');
+    if (password.length < 6)
+      return toast.error('Password must be at least 6 characters');
     setLoading(true);
     try {
       const data = await apiSignup({ name, email, age: Number(age), phone, password });
       login(data);
-      toast.success(`Welcome to Alifer Academy, ${data.name}! 🎓`);
+      toast.success(`Welcome to Alifer Academy, ${data.name}! 🎉`);
       onClose();
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Signup failed');
+    } catch (err: any) {
+      toast.error(err.message || 'Signup failed');
     } finally {
       setLoading(false);
     }
@@ -74,6 +75,7 @@ const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
           onClick={onClose}
         >
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+
           <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -85,7 +87,7 @@ const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
             {/* Close */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors z-10"
             >
               <X size={20} />
             </button>
@@ -102,7 +104,7 @@ const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
               </p>
             </div>
 
-            {/* Tabs */}
+            {/* Tab switcher */}
             <div className="flex bg-muted/50 rounded-xl p-1 mb-6">
               {(['login', 'signup'] as const).map((t) => (
                 <button
@@ -119,40 +121,36 @@ const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
               ))}
             </div>
 
-            {/* Login Form */}
+            {/* Forms */}
             <AnimatePresence mode="wait">
-              {tab === 'login' ? (
+              {/* ── LOGIN ── */}
+              {tab === 'login' && (
                 <motion.form
                   key="login"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.2 }}
                   onSubmit={handleLogin}
                   className="space-y-4"
                 >
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Email</label>
+                  <div className="space-y-4">
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         type="email"
-                        placeholder="you@example.com"
-                        value={loginEmail}
-                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="Email address"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className="pl-9 bg-muted/50 border-border"
                       />
                     </div>
-                  </div>
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Password</label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         type={showPass ? 'text' : 'password'}
-                        placeholder="••••••••"
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className="pl-9 pr-9 bg-muted/50 border-border"
                       />
                       <button
@@ -164,99 +162,90 @@ const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
                       </button>
                     </div>
                   </div>
-                  <Button type="submit" className="w-full gap-2 mt-2" disabled={loading}>
-                    {loading ? 'Signing in...' : (
-                      <><Mail className="h-4 w-4" /> Sign In <ArrowRight className="h-4 w-4" /></>
-                    )}
+                  <Button
+                    type="submit"
+                    className="w-full py-6 text-base font-bold gap-2 mt-2 shadow-lg hover:shadow-primary/20 transition-all"
+                    disabled={loading}
+                  >
+                    {loading ? 'Signing in...' : <><Mail className="h-4 w-4" /> Sign In <ArrowRight className="h-4 w-4" /></>}
                   </Button>
                 </motion.form>
-              ) : (
+              )}
+
+              {/* ── SIGNUP ── */}
+              {tab === 'signup' && (
                 <motion.form
                   key="signup"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
                   onSubmit={handleSignup}
                   className="space-y-3"
                 >
                   <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-sm text-muted-foreground mb-1 block">Full Name</label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Your name"
-                          value={signupData.name}
-                          onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
-                          className="pl-9 bg-muted/50 border-border"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-sm text-muted-foreground mb-1 block">Age</label>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          type="number"
-                          placeholder="Age"
-                          value={signupData.age}
-                          onChange={(e) => setSignupData({ ...signupData, age: e.target.value })}
-                          className="pl-9 bg-muted/50 border-border"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Email</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="relative col-span-2 sm:col-span-1">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        type="email"
-                        placeholder="you@example.com"
-                        value={signupData.email}
-                        onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                        placeholder="Full Name"
+                        value={signupData.name}
+                        onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
+                        className="pl-9 bg-muted/50 border-border"
+                      />
+                    </div>
+                    <div className="relative col-span-2 sm:col-span-1">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="number"
+                        placeholder="Age"
+                        value={signupData.age}
+                        onChange={(e) => setSignupData({ ...signupData, age: e.target.value })}
                         className="pl-9 bg-muted/50 border-border"
                       />
                     </div>
                   </div>
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Phone Number</label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="tel"
-                        placeholder="+91 XXXXX XXXXX"
-                        value={signupData.phone}
-                        onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
-                        className="pl-9 bg-muted/50 border-border"
-                      />
-                    </div>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-9 bg-muted/50 border-border"
+                    />
                   </div>
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type={showPass ? 'text' : 'password'}
-                        placeholder="Min 6 characters"
-                        value={signupData.password}
-                        onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                        className="pl-9 pr-9 bg-muted/50 border-border"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPass(!showPass)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      >
-                        {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                      </button>
-                    </div>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="tel"
+                      placeholder="Phone"
+                      value={signupData.phone}
+                      onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
+                      className="pl-9 bg-muted/50 border-border"
+                    />
                   </div>
-                  <Button type="submit" className="w-full gap-2 mt-1" disabled={loading}>
-                    {loading ? 'Creating account...' : (
-                      <><User className="h-4 w-4" /> Create Account <ArrowRight className="h-4 w-4" /></>
-                    )}
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type={showPass ? 'text' : 'password'}
+                      placeholder="Password (min 6 chars)"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-9 pr-9 bg-muted/50 border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPass(!showPass)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full py-6 text-base font-bold gap-2 mt-1 shadow-lg hover:shadow-primary/20 transition-all"
+                    disabled={loading}
+                  >
+                    {loading ? 'Creating account...' : <><User className="h-4 w-4" /> Create Account <ArrowRight className="h-4 w-4" /></>}
                   </Button>
                 </motion.form>
               )}

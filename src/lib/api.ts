@@ -37,6 +37,12 @@ export const apiLogin = async (email: string, password: string) => {
   });
 };
 
+export const apiLogout = async () => {
+  return fetchWithAuth('/api/auth/logout', {
+    method: 'POST',
+  });
+};
+
 export const apiGetMe = async () => {
   return fetchWithAuth('/api/auth/me');
 };

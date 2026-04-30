@@ -13,6 +13,7 @@ import WhatMakesDifferentSection from "@/components/WhatMakesDifferentSection";
 import SuccessStoriesSection from "@/components/SuccessStoriesSection";
 import StudentDashboardDemo from "@/components/StudentDashboardDemo";
 import PostersCarousel from "@/components/PostersCarousel";
+import PromotionModal from "@/components/PromotionModal";
 import FooterSection from "@/components/FooterSection";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -20,12 +21,17 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [authOpen, setAuthOpen] = useState(false);
+  const [promoOpen, setPromoOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1800);
+    const timer = setTimeout(() => {
+      setLoading(false);
+      // Show promo modal after loading screen is gone
+      setTimeout(() => setPromoOpen(true), 800);
+    }, 1800);
     return () => clearTimeout(timer);
   }, []);
 
@@ -86,6 +92,11 @@ const Index = () => {
 
       <ChatbotWidget />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      <PromotionModal 
+        isOpen={promoOpen} 
+        onClose={() => setPromoOpen(false)} 
+        onRegister={handleGetStarted}
+      />
     </div>
   );
 };
