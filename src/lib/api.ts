@@ -1,4 +1,6 @@
-const API_URL = "https://alifer-academy.onrender.com";
+const API_URL = window.location.hostname === 'localhost' 
+  ? "http://localhost:5000" 
+  : "https://alifer-academy.onrender.com";
 
 export const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("token");
@@ -21,7 +23,7 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
 
 // ─── Auth ─────────────────────────────────────────────────
 export const apiSignup = async (payload: {
-  name: string; email: string; age: number; phone: string; password: string;
+  name: string; email: string; age?: number; phone: string; password: string;
 }) => {
   return fetchWithAuth('/api/auth/signup', {
     method: 'POST',
@@ -33,6 +35,20 @@ export const apiLogin = async (email: string, password: string) => {
   return fetchWithAuth('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
+  });
+};
+
+export const apiVerifyOtp = async (data: { email: string; otp: string }) => {
+  return fetchWithAuth('/api/auth/verify-otp', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+};
+
+export const apiResendOtp = async (email: string) => {
+  return fetchWithAuth('/api/auth/resend-otp', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
   });
 };
 

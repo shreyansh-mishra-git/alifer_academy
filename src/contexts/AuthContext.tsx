@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Restore user from localStorage on mount
     const storedUser = localStorage.getItem('alifer_user');
     const storedToken = localStorage.getItem('token');
-    if (storedUser && storedToken) {
+    if (storedUser && storedToken && storedToken !== 'undefined' && storedToken !== 'null') {
       try {
         const parsed = JSON.parse(storedUser);
         setUser(parsed);
