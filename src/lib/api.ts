@@ -117,6 +117,17 @@ export const apiSeedCourse = async () => {
   });
 };
 
+export const apiAdminGetUsers = async () => {
+  return fetchWithAuth('/api/admin/users');
+};
+
+export const apiAdminEnrollManual = async (userId: string, courseId: string) => {
+  return fetchWithAuth('/api/admin/enroll-manual', {
+    method: 'POST',
+    body: JSON.stringify({ userId, courseId }),
+  });
+};
+
 export const apiGetAdminSecretData = async () => {
   return fetchWithAuth('/api/admin-dashboard-secret');
 };

@@ -80,7 +80,7 @@ router.get('/my', protect, async (req, res) => {
 router.get('/all', protect, adminOnly, async (req, res) => {
   try {
     const payments = await Payment.find()
-      .populate('userId', 'name email phone')
+      .populate('userId', '-password')
       .populate('courseId', 'title price')
       .sort({ createdAt: -1 });
     res.json(payments);

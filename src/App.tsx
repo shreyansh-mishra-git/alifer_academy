@@ -43,6 +43,22 @@ const App = () => (
                 }
               />
               <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin-dashboard"
+                element={
+                  <ProtectedRoute>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/admin-dashboard-secret"
                 element={<AdminDashboardSecret />}
               />

@@ -14,7 +14,7 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
     const approvedPayments = await Payment.countDocuments({ status: 'approved' });
 
     const recentPayments = await Payment.find({ status: 'pending' })
-      .populate('userId', 'name email phone')
+      .populate('userId', '-password')
       .populate('courseId', 'title price')
       .sort({ createdAt: -1 })
       .limit(10);
@@ -100,6 +100,40 @@ router.post('/seed-course', protect, adminOnly, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error seeding course' });
+  }
+});
+
+// POST /api/admin/enroll-manual — manually enroll a user in a course
+router.post('/enroll-manual', protect, adminOnly, async (req, res) => {
+  try {
+    const { userId, courseId } = req.body;
+    if (!userId || !courseId) return res.status(400).json({ message: 'userId and courseId are required' });
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 30); // 30 days access
+
+    const courseIndex = user.enrolledCourses.findIndex(e => String(e.course) === String(courseId));
+    if (courseIndex > -1) {
+      user.enrolledCourses[courseIndex].expiresAt = expiresAt;
+      user.enrolledCourses[courseIndex].enrolledAt = new Date();
+    } else {
+      user.enrolledCourses.push({
+        course: courseId,
+        enrolledAt: new Date(),
+        expiresAt: expiresAt
+      });
+    }
+    await user.save();
+
+    res.json({ message: `Successfully enrolled ${user.name} in ${course.title}` });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

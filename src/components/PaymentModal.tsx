@@ -16,7 +16,7 @@ interface PaymentModalProps {
   onSuccess?: () => void;
 }
 
-const QR_IMAGE_URL = 'https://placehold.co/200x200?text=Dummy+QR+Code';
+const QR_IMAGE_URL = '/payment-qr.jpg';
 
 const PaymentModal = ({
   open, onClose, courseId, courseTitle, originalPrice, onSuccess
@@ -29,7 +29,8 @@ const PaymentModal = ({
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const UPI_ID = 'aliferacademy@upi'; 
+  const UPI_ID = 'shikhan6@icici'; 
+  const SUPPORT_NUMBER = '+91 97602 93095';
 
   const handleCopyUPI = () => {
     navigator.clipboard.writeText(UPI_ID);
@@ -81,24 +82,21 @@ const PaymentModal = ({
 
             {step === 'qr' && (
               <div className="text-center">
-                <div className="mb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <QrCode className="h-6 w-6 text-primary" />
-                  </div>
+                <div className="mb-2">
                   <h3 className="text-xl font-bold font-display">Scan & Pay</h3>
-                  <p className="text-muted-foreground text-xs mt-1">{courseTitle}</p>
+                  <p className="text-muted-foreground text-[10px] mt-0.5">{courseTitle}</p>
                 </div>
 
                 {/* Price */}
-                <div className="flex items-center justify-center gap-3 mb-6 bg-primary/5 py-4 rounded-2xl border border-primary/10">
+                <div className="flex items-center justify-center gap-3 mb-3 bg-primary/5 py-2 rounded-2xl border border-primary/10">
                   <div className="text-center">
-                    <span className="text-4xl font-bold text-primary">₹{finalPrice}</span>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Total Amount</p>
+                    <span className="text-3xl font-bold text-primary">₹{finalPrice}</span>
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">Total Amount</p>
                   </div>
-                  <div className="h-10 w-px bg-primary/20" />
+                  <div className="h-8 w-px bg-primary/20" />
                   <div className="text-left">
-                    <span className="text-sm line-through text-muted-foreground block">₹{originalPrice}</span>
-                    <span className="text-xs bg-green-500/15 text-green-400 px-2 py-0.5 rounded-full font-bold">
+                    <span className="text-xs line-through text-muted-foreground block">₹{originalPrice}</span>
+                    <span className="text-[10px] bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full font-bold">
                       {discount}% OFF
                     </span>
                   </div>
@@ -106,28 +104,35 @@ const PaymentModal = ({
 
                 {/* QR Code */}
                 {showPayment && (
-                  <div className="bg-white rounded-2xl p-4 mx-auto w-fit mb-6 shadow-xl border-4 border-white ring-1 ring-border/50">
+                  <div className="bg-white rounded-2xl p-1.5 mx-auto w-full max-w-[260px] mb-3 shadow-xl border-4 border-white ring-1 ring-border/50 overflow-hidden">
                     <img
                       src={QR_IMAGE_URL}
                       alt="Payment QR"
-                      className="w-44 h-44 object-contain rounded-lg"
+                      className="w-full h-auto object-contain rounded-lg block"
                     />
                   </div>
                 )}
 
                 {/* UPI ID */}
-                <div className="bg-muted/50 rounded-xl p-3 mb-4 flex items-center justify-between">
+                <div className="bg-muted/50 rounded-xl p-2.5 mb-3 flex items-center justify-between">
                   <span className="text-sm font-mono text-foreground">{UPI_ID}</span>
                   <button onClick={handleCopyUPI} className="text-primary hover:text-primary/80">
                     {copied ? <Check size={16} /> : <Copy size={16} />}
                   </button>
                 </div>
 
-                <p className="text-xs text-muted-foreground mb-4">
-                  Scan dummy QR or pay to UPI ID above
-                </p>
+                <div className="space-y-1.5 mb-4 text-left">
+                  <p className="text-[10px] text-primary font-medium flex items-start gap-1">
+                    <span className="mt-0.5 font-bold">*</span>
+                    <span>Send receipt/screenshot to: <strong>{SUPPORT_NUMBER}</strong></span>
+                  </p>
+                  <p className="text-[10px] text-amber-500 font-bold flex items-start gap-1 bg-amber-500/5 p-1.5 rounded-lg border border-amber-500/20">
+                    <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                    <span>Exact amount required for course unlock.</span>
+                  </p>
+                </div>
 
-                <Button className="w-full py-6 font-bold text-lg" onClick={() => setStep('verify')}>
+                <Button className="w-full py-5 font-bold text-base" onClick={() => setStep('verify')}>
                   I Have Paid
                 </Button>
               </div>
@@ -139,6 +144,9 @@ const PaymentModal = ({
                 <h3 className="text-xl font-bold font-display mb-2">Confirm Payment</h3>
                 <p className="text-muted-foreground text-sm mb-4">
                   Enter your UTR/Transaction ID for faster approval (optional)
+                </p>
+                <p className="text-[10px] text-primary font-bold mb-4 bg-primary/5 p-2 rounded-lg border border-primary/20">
+                  * Please send the receipt or a screenshot to: {SUPPORT_NUMBER}
                 </p>
                 <Input
                   placeholder="UTR / Transaction ID (optional)"
