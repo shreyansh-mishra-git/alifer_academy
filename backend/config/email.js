@@ -1,42 +1,36 @@
-const nodemailer = require('nodemailer');
+const axios = require('axios');
 
-// ✅ Stable Brevo SMTP config (Render-safe)
-const transporter = nodemailer.createTransport({
-  host: 'smtp-relay.brevo.com',
-  port: 2525, // 🔥 best for cloud
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 15000,
-});
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
-// ✅ Verify connection
-transporter.verify((error) => {
-  if (error) {
-    console.error('❌ Email server error:', error);
-  } else {
-    console.log('✅ Email server is ready');
-  }
-});
-
-// ✅ Generic email sender
+// ✅ Send email using Brevo API
 const sendEmail = async ({ email, subject, message }) => {
   try {
     console.log("📤 Sending email to:", email);
 
-    const info = await transporter.sendMail({
-      from: `"Alifer Academy" <aa0b77001@smtp-brevo.com>`,
-      to: email,
-      subject,
-      html: message,
-    });
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: "Alifer Academy",
+          email: "aa0b77001@smtp-brevo.com",
+        },
+        to: [{ email }],
+        subject: subject,
+        htmlContent: message,
+      },
+      {
+        headers: {
+          "api-key": BREVO_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    console.log('✅ Email sent successfully:', info.response);
-    return info;
+    console.log("✅ Email sent:", response.data);
+    return response.data;
+
   } catch (error) {
-    console.error('❌ Email failed:', error);
+    console.error("❌ Email failed:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -45,20 +39,14 @@ const sendEmail = async ({ email, subject, message }) => {
 const sendOTPEmail = async (email, otp) => {
   console.log("📨 Sending OTP to:", email);
 
-  const subject = 'Your Verification Code - Alifer Academy';
+  const subject = "Your OTP Code";
 
   const message = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; padding: 20px;">
-      <h2 style="color: #4F46E5; text-align: center;">Welcome to Alifer Academy!</h2>
-      <p>Hello,</p>
-      <p>Use the OTP below to continue:</p>
-      <div style="background: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px;">
-        ${otp}
-      </div>
-      <p style="margin-top: 20px;">Valid for <strong>10 minutes</strong>.</p>
-      <p>If you didn’t request this, ignore this email.</p>
-      <hr>
-      <p style="font-size: 12px; text-align: center;">© 2026 Alifer Academy</p>
+    <div style="font-family: Arial; max-width:600px; margin:auto; padding:20px;">
+      <h2>Alifer Academy</h2>
+      <p>Your OTP is:</p>
+      <h1 style="letter-spacing:5px;">${otp}</h1>
+      <p>This OTP is valid for 10 minutes.</p>
     </div>
   `;
 
