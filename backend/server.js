@@ -6,7 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-// Import Routes
+// Routes
 const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/courses');
 const paymentRoutes = require('./routes/payment');
@@ -20,34 +20,19 @@ const Course = require('./models/Course');
 const app = express();
 
 // ===== MIDDLEWARE =====
-app.use(express.json()); // CRITICAL for parsing JSON bodies
+app.use(express.json());
 
-// ===== CORS FIX =====
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'http://localhost:8080',
-  'https://alifer-academy.vercel.app',
-  'https://alifer-academy.onrender.com'
-];
-
+// ✅ FIXED CORS (IMPORTANT)
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true, // 🔥 allow all origins (fixes Vercel issues)
   credentials: true,
 }));
 
-// ===== DATABASE CONNECTION =====
+// ===== DATABASE =====
 connectDB();
 
-// ===== ROUTES (Mounting Auth Routes) =====
-app.use('/api/auth', authRoutes);   // THIS IS THE CRITICAL MOUNT
+// ===== ROUTES =====
+app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/enroll', paymentRoutes);
@@ -84,14 +69,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Alifer Academy API running' });
 });
 
-// ===== 404 HANDLER =====
+// ===== 404 =====
 app.use((req, res) => {
   res.status(404).json({ message: 'API route not found' });
 });
 
 // ===== ERROR HANDLER =====
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('❌ Server Error:', err.message);
   res.status(500).json({ message: err.message || 'Internal server error' });
 });
 
