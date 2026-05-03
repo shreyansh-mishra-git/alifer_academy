@@ -4,18 +4,21 @@ if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
   console.error('❌ CRITICAL: EMAIL_USER or EMAIL_PASS missing from environment variables!');
 }
 
-// Create a reusable transporter object using the default SMTP transport
+// ✅ FIXED transporter (IPv4 + stable config)
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // use SSL
+  port: 587, // ✅ changed from 465
+  secure: false, // ✅ important
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-  // Add debug logging
+  tls: {
+    rejectUnauthorized: false,
+  },
+  family: 4, // 🔥 FORCE IPv4 (MAIN FIX)
   debug: true,
-  logger: true
+  logger: true,
 });
 
 // Verify connection configuration
