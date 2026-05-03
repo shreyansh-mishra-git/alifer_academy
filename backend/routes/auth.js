@@ -14,7 +14,8 @@ const generateToken = (id, sessionId) =>
 // @access  Public
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    let { name, email, phone, password } = req.body;
+    if (email) email = email.trim();
 
     if (!name || !email || !phone || !password) {
       return res.status(400).json({ message: 'All fields are required' });
@@ -48,7 +49,10 @@ router.post('/signup', async (req, res) => {
       await sendOTPEmail(email, otp);
     } catch (emailError) {
       console.error('Email failed:', emailError);
-      return res.status(500).json({ message: 'Failed to send OTP email. Please try again.' });
+      return res.status(500).json({ 
+        message: 'Failed to send OTP email. Please try again.',
+        error: emailError.message 
+      });
     }
 
     res.status(201).json({
@@ -66,7 +70,8 @@ router.post('/signup', async (req, res) => {
 // @access  Public
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    if (email) email = email.trim();
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
@@ -91,7 +96,10 @@ router.post('/login', async (req, res) => {
       await sendOTPEmail(email, otp);
     } catch (emailError) {
       console.error('Email failed:', emailError);
-      return res.status(500).json({ message: 'Failed to send OTP email' });
+      return res.status(500).json({ 
+        message: 'Failed to send OTP email',
+        error: emailError.message
+      });
     }
 
     res.json({
@@ -181,7 +189,15 @@ router.post('/resend-otp', async (req, res) => {
     user.lastOtpSent = now;
     await user.save();
 
-    await sendOTPEmail(email, otp);
+    try {
+      await sendOTPEmail(email, otp);
+    } catch (emailError) {
+      console.error('Email failed:', emailError);
+      return res.status(500).json({ 
+        message: 'Failed to send OTP email',
+        error: emailError.message
+      });
+    }
 
     res.json({ message: 'New OTP sent to email' });
   } catch (error) {

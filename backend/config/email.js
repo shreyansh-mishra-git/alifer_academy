@@ -2,6 +2,12 @@ const nodemailer = require('nodemailer');
 
 if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_HOST) {
   console.error('❌ CRITICAL: Email environment variables missing!');
+} else {
+  console.log('📧 Email Config Loaded:', {
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    user: process.env.EMAIL_USER
+  });
 }
 
 // ✅ Brevo SMTP CONFIG
@@ -37,8 +43,12 @@ transporter.verify((error, success) => {
 const sendEmail = async ({ email, subject, message }) => {
   console.log('📤 Attempting to send email to:', email);
 
+  // Brevo often requires a verified sender email. 
+  // If EMAIL_FROM is not set, we fallback to EMAIL_USER.
+  const senderEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+
   const mailOptions = {
-    from: `"Alifer Academy" <${process.env.EMAIL_USER}>`,
+    from: `"Alifer Academy" <${senderEmail}>`,
     to: email,
     subject,
     html: message,
@@ -49,7 +59,13 @@ const sendEmail = async ({ email, subject, message }) => {
     console.log('✅ EMAIL SENT:', info.response);
     return info;
   } catch (error) {
-    console.error('❌ EMAIL FAILED:', error);
+    console.error('❌ EMAIL FAILED DETAILS:', {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode
+    });
     throw error;
   }
 };
