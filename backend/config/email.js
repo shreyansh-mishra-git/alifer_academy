@@ -27,7 +27,7 @@ const sendEmail = async ({ email, subject, message }) => {
     console.log("📤 Sending email to:", email);
 
     const info = await transporter.sendMail({
-      from: `"Alifer Academy" <${process.env.EMAIL_USER}>`,
+      from: `"Alifer Academy" <aa0b77001@smtp-brevo.com>`,
       to: email,
       subject,
       html: message,
