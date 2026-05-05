@@ -14,10 +14,9 @@ const protect = async (req, res, next) => {
       req.user = await User.findById(decoded.id).select('-password');
       if (!req.user) return res.status(401).json({ message: 'User not found' });
 
-      // Strict enforcement: User must be verified to access protected routes
-      if (!req.user.isVerified) {
-        return res.status(403).json({ message: 'Email verification required' });
-      }
+      // Check if subscription has expired
+      const isSubscribed = req.user.subscriptionExpiry && req.user.subscriptionExpiry > new Date();
+      req.user.isSubscribed = !!isSubscribed;
 
       // Single Device Login Check
       // The token's sessionId must match the activeSessionId stored in the database

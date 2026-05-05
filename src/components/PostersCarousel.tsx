@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import poster8 from "@/assets/poster8.jpg";
+import denm1 from "@/assets/DENM UNIT 1.jpg";
 
 
 const posters = [
@@ -9,7 +9,7 @@ const posters = [
   { title: "NDA Crash Course", subtitle: "Start your defence journey today", gradient: "from-secondary/20 to-orange-600/20" },
   { title: "Free GATE Webinar", subtitle: "This Saturday at 7PM", gradient: "from-accent/20 to-purple-600/20" },
   { title: "Scholarship Test", subtitle: "Win up to 100% fee waiver", gradient: "from-emerald-500/20 to-teal-600/20" },
-  { title: "New Batch Launch", subtitle: "Join our most successful preparation program", image: poster8 },
+  { title: "New Batch Launch", subtitle: "Join our most successful preparation program", image: denm1 },
 ];
 
 const PostersCarousel = () => {

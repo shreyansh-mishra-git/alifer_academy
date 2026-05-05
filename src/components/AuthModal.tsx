@@ -51,65 +51,21 @@ const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
         if (!email || !password) return toast.error('Please fill all fields');
         const data = await apiLogin(email, password);
         
-        if (data.requiresOtp || !data.token) {
-          setStep('otp');
-          startTimer();
-          toast.success(data.message || 'OTP sent to your email! 📧');
-        } else {
-          // Only login if we actually got a token
-          login(data);
-          toast.success(`Welcome back! 🎉`);
-          onClose();
-        }
+        login(data);
+        toast.success(`Welcome back! 🎉`);
+        onClose();
       } else {
         const { name, phone } = signupData;
         if (!name || !email || !phone || !password) return toast.error('All fields are required');
         
-        const res = await apiSignup({ name, email, phone, password, age: 0 }); // Age set to 0 as fallback if needed by API
+        const data = await apiSignup({ name, email, phone, password, age: 0 }); 
         
-        setStep('otp');
-        startTimer();
-        toast.success('Account created! Please verify your email 📧');
+        login(data);
+        toast.success('Account created! Welcome to Alifer Academy 🎉');
+        onClose();
       }
     } catch (err: any) {
       toast.error(err.message || 'Action failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (otp.length !== 6) return toast.error('Enter 6-digit OTP');
-    setLoading(true);
-
-    try {
-      const data = await apiVerifyOtp({ email, otp });
-      
-      // CRITICAL: Save token and update context
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-      }
-      
-      login(data);
-      toast.success('Email verified! Welcome to Alifer Academy 🎉');
-      onClose();
-    } catch (err: any) {
-      toast.error(err.message || 'Verification failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    if (timer > 0) return;
-    setLoading(true);
-    try {
-      await apiResendOtp(email);
-      toast.success('New OTP sent! 📧');
-      startTimer();
-    } catch (err: any) {
-      toast.error(err.message || 'Resend failed');
     } finally {
       setLoading(false);
     }
@@ -146,189 +102,130 @@ const AuthModal = ({ open, onClose, defaultTab = 'login' }: AuthModalProps) => {
             {/* Header */}
             <div className="mb-6">
               <h2 className="text-2xl font-display font-bold gradient-text">
-                {step === 'otp' ? 'Verify Email 📧' : (tab === 'login' ? 'Welcome Back 👋' : 'Join Alifer Academy 🎓')}
+                {tab === 'login' ? 'Welcome Back 👋' : 'Join Alifer Academy 🎓'}
               </h2>
               <p className="text-muted-foreground text-sm mt-1">
-                {step === 'otp' 
-                  ? `Enter the 6-digit code sent to ${email}` 
-                  : (tab === 'login'
-                    ? 'Sign in to continue your learning journey'
-                    : 'Create your account and start learning today')}
+                {tab === 'login'
+                  ? 'Sign in to continue your learning journey'
+                  : 'Create your account and start learning today'}
               </p>
             </div>
 
-            {/* Tab switcher - hide if otp step */}
-            {step !== 'otp' && (
-              <div className="flex bg-muted/50 rounded-xl p-1 mb-6">
-                {(['login', 'signup'] as const).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => {
-                      setTab(t);
-                      setStep('form');
-                    }}
-                    className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                      tab === t
-                        ? 'bg-primary text-primary-foreground shadow'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {t === 'login' ? 'Login' : 'Sign Up'}
-                  </button>
-                ))}
-              </div>
-            )}
+            {/* Tab switcher */}
+            <div className="flex bg-muted/50 rounded-xl p-1 mb-6">
+              {(['login', 'signup'] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => {
+                    setTab(t);
+                  }}
+                  className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    tab === t
+                      ? 'bg-primary text-primary-foreground shadow'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t === 'login' ? 'Login' : 'Sign Up'}
+                </button>
+              ))}
+            </div>
 
             {/* Forms */}
             <AnimatePresence mode="wait">
-              {step === 'otp' ? (
-                <motion.form
-                  key="otp"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  onSubmit={handleVerify}
-                  className="space-y-4"
-                >
-                  <div className="space-y-4">
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="text"
-                        placeholder="6-digit OTP"
-                        maxLength={6}
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                        className="pl-9 bg-muted/50 border-border text-center tracking-[1em] font-bold text-lg"
-                        autoFocus
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full py-6 text-base font-bold gap-2 mt-2 shadow-lg hover:shadow-primary/20 transition-all"
-                    disabled={loading || otp.length !== 6}
-                  >
-                    {loading ? 'Verifying...' : 'Verify & Continue'}
-                  </Button>
-                  
-                  <div className="text-center">
-                    <button
-                      type="button"
-                      onClick={handleResendOtp}
-                      disabled={timer > 0 || loading}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {timer > 0 ? `Resend code in ${timer}s` : 'Resend OTP'}
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setStep('form')}
-                    className="w-full text-xs text-muted-foreground hover:underline"
-                  >
-                    Back to {tab === 'login' ? 'Login' : 'Signup'}
-                  </button>
-                </motion.form>
-              ) : (
-                <motion.form
-                  key={tab}
-                  initial={{ opacity: 0, x: tab === 'login' ? -20 : 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: tab === 'login' ? 20 : -20 }}
-                  onSubmit={handleSubmit}
-                  className="space-y-4"
-                >
-                  {tab === 'signup' && (
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Full Name"
-                        value={signupData.name}
-                        onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
-                        className="pl-9 bg-muted/50 border-border"
-                      />
-                    </div>
-                  )}
-
+              <motion.form
+                key={tab}
+                initial={{ opacity: 0, x: tab === 'login' ? -20 : 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: tab === 'login' ? 20 : -20 }}
+                onSubmit={handleSubmit}
+                className="space-y-4"
+              >
+                {tab === 'signup' && (
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      type="email"
-                      placeholder="Email address"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Full Name"
+                      value={signupData.name}
+                      onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
                       className="pl-9 bg-muted/50 border-border"
                     />
                   </div>
+                )}
 
-                  {tab === 'signup' && (
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="tel"
-                        placeholder="Phone number"
-                        value={signupData.phone}
-                        onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
-                        className="pl-9 bg-muted/50 border-border"
-                      />
-                    </div>
-                  )}
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    placeholder="Email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-9 bg-muted/50 border-border"
+                  />
+                </div>
 
+                {tab === 'signup' && (
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      type={showPass ? 'text' : 'password'}
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-9 pr-9 bg-muted/50 border-border"
+                      type="tel"
+                      placeholder="Phone number"
+                      value={signupData.phone}
+                      onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
+                      className="pl-9 bg-muted/50 border-border"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPass(!showPass)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
                   </div>
+                )}
 
-                  <Button
-                    type="submit"
-                    className="w-full py-6 text-base font-bold gap-2 mt-2 shadow-lg hover:shadow-primary/20 transition-all"
-                    disabled={loading}
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type={showPass ? 'text' : 'password'}
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-9 pr-9 bg-muted/50 border-border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
-                    {loading ? (tab === 'login' ? 'Signing in...' : 'Creating account...') : (
-                      <>
-                        {tab === 'login' ? <Mail className="h-4 w-4" /> : <User className="h-4 w-4" />}
-                        {tab === 'login' ? 'Sign In' : 'Create Account'}
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </motion.form>
-              )}
+                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full py-6 text-base font-bold gap-2 mt-2 shadow-lg hover:shadow-primary/20 transition-all"
+                  disabled={loading}
+                >
+                  {loading ? (tab === 'login' ? 'Signing in...' : 'Creating account...') : (
+                    <>
+                      {tab === 'login' ? <Mail className="h-4 w-4" /> : <User className="h-4 w-4" />}
+                      {tab === 'login' ? 'Sign In' : 'Create Account'}
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </motion.form>
             </AnimatePresence>
 
             {/* Footer toggle */}
-            {step === 'form' && (
-              <p className="text-xs text-muted-foreground mt-5 text-center">
-                {tab === 'login' ? (
-                  <>Don't have an account?{' '}
-                    <span onClick={() => setTab('signup')} className="text-primary cursor-pointer hover:underline font-medium">
-                      Sign up free
-                    </span>
-                  </>
-                ) : (
-                  <>Already have an account?{' '}
-                    <span onClick={() => setTab('login')} className="text-primary cursor-pointer hover:underline font-medium">
-                      Login here
-                    </span>
-                  </>
-                )}
-              </p>
-            )}
+            <p className="text-xs text-muted-foreground mt-5 text-center">
+              {tab === 'login' ? (
+                <>Don't have an account?{' '}
+                  <span onClick={() => setTab('signup')} className="text-primary cursor-pointer hover:underline font-medium">
+                    Sign up free
+                  </span>
+                </>
+              ) : (
+                <>Already have an account?{' '}
+                  <span onClick={() => setTab('login')} className="text-primary cursor-pointer hover:underline font-medium">
+                    Login here
+                  </span>
+                </>
+              )}
+            </p>
           </motion.div>
         </motion.div>
       )}

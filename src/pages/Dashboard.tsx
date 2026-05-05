@@ -83,7 +83,7 @@ const Dashboard = () => {
     toast.success('Logged out successfully');
   };
 
-  const enrolledIds = user?.enrolledCourses?.map((c) => c._id) || [];
+  const enrolledIds = user?.enrolledCourses?.map((c: any) => (c.course?._id || c.course || c._id).toString()) || [];
   const enrolledCourses = allCourses.filter((c) => enrolledIds.includes(c._id));
   const exploreableCourses = allCourses.filter((c) => !enrolledIds.includes(c._id));
 
@@ -192,7 +192,12 @@ const Dashboard = () => {
         {/* Tab Content */}
         {activeTab === 'enrolled' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            {enrolledCourses.length === 0 ? (
+            {loadingCourses ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-muted-foreground animate-pulse">Loading your dashboard...</p>
+              </div>
+            ) : enrolledCourses.length === 0 ? (
               <div className="text-center py-16">
                 <BookOpen className="h-14 w-14 text-muted-foreground/30 mx-auto mb-4" />
                 <h3 className="font-semibold text-lg mb-2">No courses yet</h3>
@@ -205,28 +210,77 @@ const Dashboard = () => {
               </div>
             ) : (
               <div>
-                {/* Progress Tracker */}
-                {totalVideos > 0 && (
-                  <div className="glass-card rounded-2xl p-5 mb-6 border border-border/20">
-                    <div className="flex items-center gap-2 mb-3">
+                {/* Progress Tracking Cards */}
+                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                  {/* Subject Progress */}
+                  <div className="glass-card rounded-2xl p-5 border border-border/20">
+                    <div className="flex items-center gap-2 mb-4">
                       <BarChart3 className="h-4 w-4 text-primary" />
-                      <h3 className="font-semibold text-sm">Progress Tracker</h3>
+                      <h4 className="font-display font-semibold text-foreground text-sm">Subject Wise Mastery</h4>
                     </div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">{completedVideosCount}/{totalVideos} videos completed</span>
-                      <span className="font-medium text-primary">{progressPct}%</span>
-                    </div>
-                    <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-primary rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progressPct}%` }}
-                        transition={{ duration: 1, ease: 'easeOut' }}
-                      />
+                    <div className="space-y-4">
+                      {(enrolledCourses.length > 0 ? enrolledCourses.slice(0, 4).map((c, idx) => {
+                        const courseCompleted = c.videos?.filter(v => v.videoId && user?.completedVideos?.includes(v.videoId)).length || 0;
+                        const courseTotal = c.videos?.length || 0;
+                        const coursePct = courseTotal > 0 ? Math.round((courseCompleted / courseTotal) * 100) : 0;
+                        return {
+                          subject: c.title,
+                          pct: coursePct,
+                          color: ["bg-primary", "bg-secondary", "bg-accent", "bg-emerald-500"][idx % 4]
+                        };
+                      }) : [
+                        { subject: "Concepts", pct: Math.min(100, Math.round((user?.completedVideos?.length || 0) * 10)), color: "bg-primary" },
+                        { subject: "Problem Solving", pct: 0, color: "bg-secondary" },
+                        { subject: "Mock Tests", pct: 0, color: "bg-accent" },
+                        { subject: "Revision", pct: 0, color: "bg-emerald-500" },
+                      ]).map((p) => (
+                        <div key={p.subject}>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-muted-foreground">{p.subject}</span>
+                            <span className="text-foreground font-medium">{p.pct}%</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                            <motion.div
+                              className={`h-full rounded-full ${p.color}`}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${p.pct}%` }}
+                              transition={{ duration: 1 }}
+                            />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                )}
 
+                  {/* Recent Activity */}
+                  <div className="glass-card rounded-2xl p-5 border border-border/20">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Clock className="h-4 w-4 text-primary" />
+                      <h4 className="font-display font-semibold text-foreground text-sm">Recent Activity</h4>
+                    </div>
+                    <div className="space-y-4">
+                      {[
+                        { icon: Play, text: user?.completedVideos?.length ? `Completed a lesson in ${enrolledCourses[0]?.title || 'your course'}` : "Start your first lesson!", time: "Recent" },
+                        { icon: Award, text: `Gained ${user?.studyStreak || 0} Day Streak!`, time: "Today" },
+                        { icon: BookOpen, text: `Enrolled in ${enrolledCourses.length} Courses`, time: "Active" },
+                      ].map((a, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <a.icon className="h-4 w-4 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-foreground font-medium">{a.text}</p>
+                            <p className="text-[10px] text-muted-foreground">{a.time}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <h3 className="font-display font-bold text-lg mb-4 flex items-center gap-2">
+                  <Play className="h-5 w-5 text-primary" fill="currentColor" /> Resume Learning
+                </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {enrolledCourses.map((course, i) => (
                     <motion.div
@@ -248,16 +302,12 @@ const Dashboard = () => {
                           <p className="text-xs text-muted-foreground mt-0.5">
                             {course.videos.length} videos • {getBaseStudents(course._id) + (course.studentsCount || 0)} students
                           </p>
-                          <div className="flex items-center gap-1 mt-2 text-xs text-emerald-400">
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            <span>1 Month Access Active</span>
-                          </div>
                         </div>
                         <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-1" />
                       </div>
                       <div className="px-5 pb-4">
                         <Button size="sm" className="w-full gap-2 group-hover:bg-primary/90" onClick={(e) => { e.stopPropagation(); navigate(`/course/${course._id}`); }}>
-                          <Play className="h-3.5 w-3.5" fill="currentColor" /> Continue Learning
+                          <Play className="h-3.5 w-3.5" fill="currentColor" /> Start Watching
                         </Button>
                       </div>
                     </motion.div>

@@ -51,6 +51,7 @@ router.get('/:id', async (req, res) => {
     }
 
     let isEnrolled = false;
+    let isExpired = false;
     let isPaymentPending = false;
     let currentUser = null;
     
@@ -64,13 +65,23 @@ router.get('/:id', async (req, res) => {
         currentUser = await User.findById(decoded.id);
         
         if (currentUser) {
-          // Check active enrollment (must be in enrolledCourses AND not expired)
           const now = new Date();
-          isEnrolled = currentUser.enrolledCourses.some(e => 
-            String(e.course) === String(course._id) && (!e.expiresAt || e.expiresAt > now)
-          );
           
-          if (!isEnrolled) {
+          // Check if user ever had this course
+          const enrollment = currentUser.enrolledCourses.find(e => String(e.course) === String(course._id));
+          
+          if (enrollment) {
+            if (!enrollment.expiresAt || enrollment.expiresAt > now) {
+              isEnrolled = true;
+            } else {
+              isExpired = true;
+            }
+          } else if (currentUser.subscriptionExpiry && currentUser.subscriptionExpiry < now) {
+            // Global subscription expired
+            isExpired = true;
+          }
+          
+          if (!isEnrolled && !isExpired) {
             // Check pending payment
             const Payment = require('../models/Payment');
             const pendingPayment = await Payment.findOne({
@@ -88,6 +99,7 @@ router.get('/:id', async (req, res) => {
 
     const c = course.toObject();
     c.isEnrolled = isEnrolled;
+    c.isExpired = isExpired;
     c.isPaymentPending = isPaymentPending;
     
     // Video Access Logic:

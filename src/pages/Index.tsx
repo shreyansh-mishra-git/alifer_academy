@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroCarousel from "@/components/HeroCarousel";
-import HeroSection from "@/components/HeroSection";
 import AuthModal from "@/components/AuthModal";
 import InfoSection from "@/components/InfoSection";
 import DemoVideoSection from "@/components/DemoVideoSection";
@@ -17,6 +16,7 @@ import PromotionModal from "@/components/PromotionModal";
 import FooterSection from "@/components/FooterSection";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import LoadingScreen from "@/components/LoadingScreen";
+import HeroSection from "@/components/HeroSection";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
@@ -57,17 +57,17 @@ const Index = () => {
         <HeroCarousel onEnroll={handleGetStarted} />
       </div>
 
-      {/* 2. Original hero section (stats + CTAs) */}
-      <HeroSection onExplore={scrollToCourses} onGetStarted={handleGetStarted} />
+      {/* 2. Courses section */}
+      <CoursesSection onAuthRequired={() => setAuthOpen(true)} />
 
-      {/* 3. Info / Blog posts */}
-      <InfoSection />
-
-      {/* 4. Demo videos */}
+      {/* 3. Watch how we teach (Demo videos) */}
       <DemoVideoSection />
 
-      {/* 5. Courses */}
-      <CoursesSection onAuthRequired={() => setAuthOpen(true)} />
+      {/* 4. Insights (Info / Blog posts) */}
+      <InfoSection />
+
+      {/* 5. Learn Smarter section (Moved here) */}
+      <HeroSection onExplore={scrollToCourses} onGetStarted={handleGetStarted} />
 
       {/* 6. Teacher section BELOW courses (moved from top) */}
       <TeacherSection />

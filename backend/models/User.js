@@ -68,6 +68,10 @@ const userSchema = new mongoose.Schema(
     lastOtpSent: {
       type: Date
     },
+    subscriptionExpiry: {
+      type: Date,
+      default: null
+    },
   },
   { timestamps: true }
 );

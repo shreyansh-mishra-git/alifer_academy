@@ -7,14 +7,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { apiGetCourses } from "@/lib/api";
 
 // Static fallback images for courses (mapped by index)
-import upsc2 from "@/assets/upsc2.jpg";
-import nda2 from "@/assets/nda2.jpg";
-import gate2 from "@/assets/gate2.jpg";
-import poster7 from "@/assets/poster7.jpg";
-import poster8 from "@/assets/poster8.jpg";
-import poster9 from "@/assets/poster9.jpg";
+import upsc from "@/assets/upsc.jpg";
+import nda from "@/assets/nda.jpg";
+import gate from "@/assets/gate.jpg";
+import denm1 from "@/assets/DENM UNIT 1.jpg";
+import denm2 from "@/assets/DENM UNIT 2.jpg";
+import denm3 from "@/assets/DENM UNIT 3.jpg";
 
-const FALLBACK_IMAGES = [poster8, nda2, gate2, poster7, poster8, poster9];
+const FALLBACK_IMAGES = [denm1, nda, gate, upsc, denm2, denm3];
 
 interface CourseCard {
   _id: string;
@@ -38,6 +38,14 @@ const getBaseStudents = (id: string) => {
     hash = id.charCodeAt(i) + ((hash << 5) - hash);
   }
   return 100 + (Math.abs(hash) % 51);
+};
+
+// Dynamic course naming based on video count
+const getCourseName = (course: CourseCard): string => {
+  const totalVideos = course.videos?.length || 0;
+  if (totalVideos === 3) return "Unit 1 - Arjuna Batch C";
+  if (totalVideos === 10) return "Unit 3 - Drona Batch C";
+  return course.title; // Fallback to the original title
 };
 
 const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
@@ -121,13 +129,17 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
 
         {/* Grid */}
         {!loading && courses.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 md:gap-12 px-4 md:px-0">
             {courses.flatMap((course, originalIndex) => {
               const enrolled = isEnrolled(course._id);
               const freeVideos = course.videos?.filter(v => v.isFree).length || 0;
               const totalVideos = course.videos?.length || 0;
               const discount = Math.round((1 - course.price / course.originalPrice) * 100);
-              const imgSrc = course.image || FALLBACK_IMAGES[originalIndex % FALLBACK_IMAGES.length];
+              
+              // Determine image based on unit
+              let imgSrc = course.image || FALLBACK_IMAGES[originalIndex % FALLBACK_IMAGES.length];
+              if (totalVideos === 3) imgSrc = denm1;
+              if (totalVideos === 10) imgSrc = denm3;
 
               // The actual course + 2 dummy ones
               return [
@@ -138,8 +150,7 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: originalIndex * 0.1 }}
-                  whileHover={{ y: -10, scale: 1.02 }}
-                  className="bg-white dark:bg-zinc-900 rounded-xl shadow-md overflow-hidden cursor-pointer group"
+                  className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg overflow-hidden cursor-pointer group hover-lift transition-all duration-300"
                   onClick={() => handleViewCourse(course)}
                 >
                   <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative">
@@ -169,8 +180,8 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                       <Clock className="h-2 w-2 animate-spin" /> ENDS SOON: {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
                     </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-sm md:text-base mb-2">Unit 1 Solution (Pandava 3.0)</h3>
+                  <div className="p-6">
+                    <h3 className="font-semibold text-base md:text-lg mb-2">{getCourseName(course)}</h3>
                     <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{course.description}</p>
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-3">
                       <span className="flex items-center gap-1 font-bold"><Clock className="h-2.5 w-2.5" />Access: 30 Days</span>
@@ -194,7 +205,7 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   key={`${course._id}-dummy1`}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  className="bg-white dark:bg-zinc-900 rounded-xl shadow-md overflow-hidden relative"
+                  className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg overflow-hidden relative hover-lift transition-all duration-300"
                 >
                   <div className="absolute bottom-0 inset-x-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm py-2">
                     <div className="bg-red-600 text-white text-xs font-bold px-5 py-2 rounded-full animate-pulse shadow-lg">
@@ -204,8 +215,10 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative">
                     <img src={imgSrc} className="w-full h-full object-cover" />
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-sm mb-2 text-muted-foreground">{course.title} (Batch Pandava 2.1)</h3>
+                  <div className="p-6">
+                    <h3 className="font-semibold text-sm mb-2 text-muted-foreground">
+                      {totalVideos === 3 ? "Unit 1 - Arjuna Batch B" : totalVideos === 10 ? "Unit 3 - Drona Batch B" : `${course.title} (Batch B)`}
+                    </h3>
                     <div className="flex items-center justify-between text-[10px] mb-3 opacity-30 font-bold">
                       <span>Access: 30 Days</span>
                       <span>100+ Enrolled</span>
@@ -223,7 +236,7 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   key={`${course._id}-dummy2`}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  className="bg-white dark:bg-zinc-900 rounded-xl shadow-md overflow-hidden relative"
+                  className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg overflow-hidden relative hover-lift transition-all duration-300"
                 >
                   <div className="absolute bottom-0 inset-x-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm py-2">
                     <div className="bg-red-600 text-white text-xs font-bold px-5 py-2 rounded-full animate-pulse shadow-lg">
@@ -233,8 +246,10 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative">
                     <img src={imgSrc} className="w-full h-full object-cover" />
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-sm mb-2 text-muted-foreground">{course.title} (Batch B)</h3>
+                  <div className="p-6">
+                    <h3 className="font-semibold text-sm mb-2 text-muted-foreground">
+                      {totalVideos === 3 ? "Unit 1 - Arjuna Batch A" : totalVideos === 10 ? "Unit 3 - Drona Batch A" : `${course.title} (Batch A)`}
+                    </h3>
                     <div className="flex items-center justify-between text-[10px] mb-3 opacity-30 font-bold">
                       <span>Access: 30 Days</span>
                       <span>100+ Enrolled</span>

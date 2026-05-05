@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Bell, Zap, ArrowRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import poster8 from "@/assets/poster8.jpg";
+import denm1 from "@/assets/DENM UNIT 1.jpg";
 
 interface PromotionModalProps {
   isOpen: boolean;
@@ -58,7 +58,7 @@ const PromotionModal = ({ isOpen, onClose, onRegister }: PromotionModalProps) =>
             {/* Banner Image - FULL VIEW (No Cropping) */}
             <div className="w-full bg-black">
               <img
-                src={poster8}
+                src={denm1}
                 alt="Promotion Banner"
                 className="w-full h-auto block" // Removed object-cover/contain to let it show naturally
                 style={{ maxHeight: '70vh' }}

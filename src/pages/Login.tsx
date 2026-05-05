@@ -36,47 +36,11 @@ const Login = () => {
     setLoading(true);
     try {
       const data = await apiLogin(email, password);
-      if (data.requiresOtp) {
-        setShowOtp(true);
-        startTimer();
-        toast.success(data.message || 'OTP sent to your email! 📧');
-      } else {
-        login(data);
-        toast.success('Logged in successfully!');
-        navigate(-1);
-      }
-    } catch (err: any) {
-      toast.error(err.message || 'Invalid credentials');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (otp.length !== 6) return toast.error('Enter 6-digit OTP');
-    setLoading(true);
-    try {
-      const data = await apiVerifyOtp(email, otp);
       login(data);
-      toast.success('Email verified! Welcome back 🎉');
+      toast.success('Logged in successfully!');
       navigate(-1);
     } catch (err: any) {
-      toast.error(err.message || 'Verification failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    if (timer > 0) return;
-    setLoading(true);
-    try {
-      await apiResendOtp(email);
-      toast.success('New OTP sent! 📧');
-      startTimer();
-    } catch (err: any) {
-      toast.error(err.message || 'Resend failed');
+      toast.error(err.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -102,115 +66,61 @@ const Login = () => {
 
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20">
-            {showOtp ? <KeyRound className="h-8 w-8 text-primary" /> : <Shield className="h-8 w-8 text-primary" />}
+            <Shield className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold font-display">
-            {showOtp ? 'Verify OTP' : 'Welcome Back'}
+            Welcome Back
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            {showOtp ? `Enter the 6-digit code sent to ${email}` : 'Log in to your Alifer Academy account'}
+            Log in to your Alifer Academy account
           </p>
         </div>
 
         <AnimatePresence mode="wait">
-          {!showOtp ? (
-            <motion.form
-              key="login-form"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              onSubmit={handleLoginSubmit}
-              className="space-y-4"
+          <motion.form
+            key="login-form"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            onSubmit={handleLoginSubmit}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  type="email" 
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10 bg-muted/30 border-border/50 h-12 px-4 rounded-xl focus:ring-2 ring-primary/20 transition-all font-medium"
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  type="password" 
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10 bg-muted/30 border-border/50 h-12 px-4 rounded-xl focus:ring-2 ring-primary/20 transition-all font-medium"
+                  required
+                />
+              </div>
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full h-12 rounded-xl font-bold text-base shadow-lg shadow-primary/10 mt-4 gap-2"
+              disabled={loading}
             >
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    type="email" 
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-muted/30 border-border/50 h-12 px-4 rounded-xl focus:ring-2 ring-primary/20 transition-all font-medium"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    type="password" 
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 bg-muted/30 border-border/50 h-12 px-4 rounded-xl focus:ring-2 ring-primary/20 transition-all font-medium"
-                    required
-                  />
-                </div>
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full h-12 rounded-xl font-bold text-base shadow-lg shadow-primary/10 mt-4 gap-2"
-                disabled={loading}
-              >
-                {loading ? 'Processing...' : <>Sign In <ArrowRight className="h-4 w-4" /></>}
-              </Button>
-            </motion.form>
-          ) : (
-            <motion.form
-              key="otp-form"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              onSubmit={handleVerifyOtp}
-              className="space-y-4"
-            >
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">6-Digit Code</label>
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    type="text" 
-                    placeholder="123456"
-                    maxLength={6}
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                    className="pl-10 bg-muted/30 border-border/50 h-12 px-4 rounded-xl focus:ring-2 ring-primary/20 transition-all font-bold text-center tracking-[0.5em]"
-                    required
-                    autoFocus
-                  />
-                </div>
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full h-12 rounded-xl font-bold text-base shadow-lg shadow-primary/10 mt-4"
-                disabled={loading || otp.length !== 6}
-              >
-                {loading ? 'Verifying...' : 'Verify & Sign In'}
-              </Button>
-              
-              <div className="text-center mt-4">
-                <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  disabled={timer > 0 || loading}
-                  className="text-sm text-primary hover:underline font-medium disabled:opacity-50 disabled:no-underline"
-                >
-                  {timer > 0 ? `Resend code in ${timer}s` : 'Resend OTP'}
-                </button>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowOtp(false)}
-                className="w-full text-xs text-muted-foreground hover:underline mt-2"
-              >
-                Use different account
-              </button>
-            </motion.form>
-          )}
+              {loading ? 'Processing...' : <>Sign In <ArrowRight className="h-4 w-4" /></>}
+            </Button>
+          </motion.form>
         </AnimatePresence>
 
         <div className="mt-8 text-center">

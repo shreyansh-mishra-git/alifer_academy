@@ -30,34 +30,29 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'Email already registered' });
     }
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
-
+    const newSessionId = crypto.randomBytes(16).toString('hex');
     const user = await User.create({
       name,
       email,
       phone,
       password,
-      otp,
-      otpExpiry,
-      isVerified: false, // Ensure not verified yet
-      lastOtpSent: new Date(),
+      isVerified: true, // Auto verify since OTP is removed
+      activeSessionId: newSessionId,
+      lastStudied: new Date(),
     });
 
-    try {
-      await sendOTPEmail(email, otp);
-    } catch (emailError) {
-      console.error('Email failed:', emailError);
-      return res.status(500).json({ 
-        message: 'Failed to send OTP email. Please try again.',
-        error: emailError.message 
-      });
-    }
-
     res.status(201).json({
-      message: 'OTP sent to email. Please verify to complete registration.',
+      message: 'User registered successfully',
+      _id: user._id,
+      name: user.name,
       email: user.email,
+      phone: user.phone,
+      isAdmin: user.isAdmin,
+      enrolledCourses: [],
+      studyStreak: user.studyStreak,
+      hoursStudied: user.hoursStudied,
+      completedVideos: [],
+      token: generateToken(user._id, newSessionId),
     });
   } catch (error) {
     console.error(error);
@@ -65,7 +60,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// @desc    User Login (Triggers OTP)
+// @desc    User Login
 // @route   POST /api/auth/login
 // @access  Public
 router.post('/login', async (req, res) => {
@@ -83,62 +78,6 @@ router.post('/login', async (req, res) => {
     const isMatch = await user.matchPassword(password);
     if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
-    // Generate 6-digit OTP for login
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
-
-    user.otp = otp;
-    user.otpExpiry = otpExpiry;
-    user.lastOtpSent = new Date();
-    await user.save();
-
-    try {
-      await sendOTPEmail(email, otp);
-    } catch (emailError) {
-      console.error('Email failed:', emailError);
-      return res.status(500).json({ 
-        message: 'Failed to send OTP email',
-        error: emailError.message
-      });
-    }
-
-    res.json({
-      message: 'OTP sent to your email. Please verify to login.',
-      email: user.email,
-      requiresOtp: true // Flag for frontend
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error during login' });
-  }
-});
-
-// @desc    Verify OTP (Works for both Signup and Login)
-// @route   POST /api/auth/verify-otp
-// @access  Public
-router.post('/verify-otp', async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-
-    if (!email || !otp) {
-      return res.status(400).json({ message: 'Email and OTP are required' });
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Check if OTP matches and is not expired
-    if (!user.otp || user.otp !== otp || user.otpExpiry < new Date()) {
-      return res.status(400).json({ message: 'Invalid or expired OTP' });
-    }
-
-    // Mark as verified and invalidate OTP (single-use)
-    user.isVerified = true;
-    user.otp = undefined;
-    user.otpExpiry = undefined;
-
     // Create session
     const newSessionId = crypto.randomBytes(16).toString('hex');
     user.activeSessionId = newSessionId;
@@ -146,63 +85,21 @@ router.post('/verify-otp', async (req, res) => {
     await user.save();
 
     res.json({
-      message: 'Verified successfully',
+      message: 'Login successful',
       _id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
       isAdmin: user.isAdmin,
+      enrolledCourses: user.enrolledCourses,
+      studyStreak: user.studyStreak,
+      hoursStudied: user.hoursStudied,
+      completedVideos: user.completedVideos,
       token: generateToken(user._id, newSessionId),
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error during verification' });
-  }
-});
-
-// @desc    Resend OTP
-// @route   POST /api/auth/resend-otp
-// @access  Public
-router.post('/resend-otp', async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ message: 'Email is required' });
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Check cooldown (60 seconds)
-    const now = new Date();
-    if (user.lastOtpSent && (now - user.lastOtpSent) < 60000) {
-      const waitTime = Math.ceil((60000 - (now - user.lastOtpSent)) / 1000);
-      return res.status(400).json({ message: `Please wait ${waitTime}s before resending` });
-    }
-
-    // Generate new OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    user.otp = otp;
-    user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
-    user.lastOtpSent = now;
-    await user.save();
-
-    try {
-      await sendOTPEmail(email, otp);
-    } catch (emailError) {
-      console.error('Email failed:', emailError);
-      return res.status(500).json({ 
-        message: 'Failed to send OTP email',
-        error: emailError.message
-      });
-    }
-
-    res.json({ message: 'New OTP sent to email' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error during OTP resend' });
+    res.status(500).json({ message: 'Server error during login' });
   }
 });
 
@@ -222,16 +119,50 @@ router.post('/logout', protect, async (req, res) => {
   }
 });
 
-// @desc    Get current user profile
+// @desc    Get current user profile & update streak
 // @route   GET /api/auth/me
 // @access  Private
 router.get('/me', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id)
       .select('-password')
-      .populate('enrolledCourses', '_id title price image category');
+      .populate('enrolledCourses.course');
+    
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Streak Logic
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    if (user.lastStudied) {
+      const last = new Date(user.lastStudied);
+      const lastDay = new Date(last.getFullYear(), last.getMonth(), last.getDate());
+      const diffDays = Math.floor((today - lastDay) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        // Consecutive day
+        user.studyStreak += 1;
+        user.lastStudied = now;
+        await user.save();
+      } else if (diffDays > 1) {
+        // Streak broken
+        user.studyStreak = 1;
+        user.lastStudied = now;
+        await user.save();
+      } else if (diffDays === 0) {
+        // Already active today, just update time for accuracy if needed
+        // (optional: update user.lastStudied = now if you want exact timestamp)
+      }
+    } else {
+      // First time studying
+      user.studyStreak = 1;
+      user.lastStudied = now;
+      await user.save();
+    }
+
     res.json(user);
   } catch (error) {
+    console.error('Me error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

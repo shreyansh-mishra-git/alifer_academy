@@ -49,7 +49,7 @@ const CoursePage = () => {
   const [authOpen, setAuthOpen] = useState(false);
 
   const isEnrolled = course?.isEnrolled ||
-    (user?.enrolledCourses?.some((c) => c._id === id) ?? false);
+    (user?.enrolledCourses?.some((c: any) => (c.course?._id || c.course) === id) ?? false);
 
   const [fakeStudents] = useState(() => Math.floor(Math.random() * 51) + 100);
 
@@ -190,29 +190,40 @@ const CoursePage = () => {
           <div className="lg:col-span-2">
             {/* ── PRODUCTION-GRADE PLAYER CONTAINER ── */}
             <div 
+              id="player-container"
               className="bg-black rounded-2xl overflow-hidden aspect-video relative mb-4 shadow-2xl group select-none"
               onContextMenu={(e) => e.preventDefault()}
             >
               {/* --- INVISIBLE INTERACTION BLOCKERS --- */}
               
-              {/* 1. TOP BLOCKER (Share Button, More Options, Title) */}
+              {/* 1. TOP BLOCKER (Share/Title - right side only to allow play click in center) */}
               <div 
-                className="absolute top-0 left-0 w-full h-[60px] z-20 bg-transparent cursor-default"
+                className="absolute top-0 right-0 w-1/2 h-[60px] z-20 bg-transparent"
                 style={{ pointerEvents: 'auto' }}
               />
               
-              {/* 2. BOTTOM-RIGHT BLOCKER (Watch on YouTube, More Videos, Logo) */}
-              {/* Sized to allow clicking the native Fullscreen button which is usually in the far corner */}
+              {/* 2. BOTTOM-RIGHT BLOCKER (YouTube links) */}
               <div 
-                className="absolute bottom-0 right-[45px] w-[155px] h-[70px] z-20 bg-transparent cursor-default"
+                className="absolute bottom-0 right-0 w-[140px] h-[60px] z-20 bg-transparent"
                 style={{ pointerEvents: 'auto' }}
               />
               
-              {/* 3. BOTTOM-LEFT BLOCKER (Logo, Redirects) */}
+              {/* 3. BOTTOM-LEFT BLOCKER (Logo) */}
               <div 
-                className="absolute bottom-0 left-0 w-[120px] h-[60px] z-20 bg-transparent cursor-default"
+                className="absolute bottom-0 left-0 w-[100px] h-[50px] z-20 bg-transparent"
                 style={{ pointerEvents: 'auto' }}
               />
+
+              {/* Custom Fullscreen Button (over the blocker) */}
+              <button
+                onClick={toggleFullScreen}
+                className="absolute bottom-2 right-2 z-30 p-2 text-white hover:text-white bg-black/60 hover:bg-black/90 backdrop-blur rounded-lg transition-all"
+                title="Fullscreen"
+              >
+                <div className="w-5 h-5 border-2 border-current rounded-sm flex items-center justify-center">
+                  <div className={`w-3 h-3 bg-current transition-all ${isFs ? 'scale-50' : 'scale-100'}`} />
+                </div>
+              </button>
 
               <AnimatePresence mode="wait">
                 {activeVideo?.videoId ? (
@@ -224,11 +235,10 @@ const CoursePage = () => {
                     className="w-full h-full relative"
                   >
                     <iframe
-                      className="w-full h-full relative z-0"
-                      src={`https://www.youtube.com/embed/${activeVideo.videoId}?modestbranding=1&rel=0&controls=1&disablekb=1&fs=1&iv_load_policy=3&autoplay=1`}
+                      className="w-full h-full relative z-0 pointer-events-auto"
+                      src={`https://www.youtube.com/embed/${activeVideo.videoId}?modestbranding=1&rel=0&controls=1&disablekb=1&fs=0&iv_load_policy=3&autoplay=1`}
                       title={activeVideo.title}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
                       sandbox="allow-same-origin allow-scripts allow-presentation allow-forms"
                     />
                   </motion.div>
@@ -252,13 +262,21 @@ const CoursePage = () => {
                             Login Now
                           </Button>
                         </>
+                      ) : course.isExpired ? (
+                        <>
+                          <p className="font-semibold text-xl mb-1 text-red-400">Subscription Expired</p>
+                          <p className="text-white/60 text-sm max-w-xs mx-auto">Your 30-day access to this course has ended. Renew now to continue learning.</p>
+                          <Button onClick={handleEnrollClick} className="mt-4 bg-primary text-white font-bold px-8 py-6 rounded-xl">
+                            Renew Subscription ₹{course.price}
+                          </Button>
+                        </>
                       ) : (
                         <>
                           <p className="font-semibold text-xl mb-1">Lesson Locked</p>
                           <p className="text-white/60 text-sm max-w-xs mx-auto">This is a premium lesson. Enroll in the course to unlock full access.</p>
-                          {!course.isPaymentPending && !isEnrolled && (
+                          {!course.isPaymentPending && !course.isEnrolled && (
                             <Button onClick={handleEnrollClick} className="mt-4 bg-primary hover:bg-primary/90 text-white font-bold px-8 py-6 rounded-xl shadow-lg shadow-primary/20">
-                              Enroll to Unlock
+                              Enroll Now ₹{course.price}
                             </Button>
                           )}
                         </>
@@ -269,7 +287,7 @@ const CoursePage = () => {
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4" /> Verification in Progress...
                         </div>
-                        <p className="text-[10px] opacity-80 font-normal">Access will be granted within 12 hours. In the meantime, feel free to watch our free preview lessons!</p>
+                        <p className="text-[10px] opacity-80 font-normal">Access will be granted within a few minutes/hours. Check back soon!</p>
                       </div>
                     )}
                   </motion.div>

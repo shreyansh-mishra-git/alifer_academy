@@ -109,6 +109,11 @@ router.patch('/approve/:paymentId', protect, adminOnly, async (req, res) => {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 30); // 30 days access
 
+    // Set global subscription expiry if not already set or if sooner
+    if (!user.subscriptionExpiry || user.subscriptionExpiry < expiresAt) {
+      user.subscriptionExpiry = expiresAt;
+    }
+
     // Check if user already has this course (update or add)
     const courseIndex = user.enrolledCourses.findIndex(e => String(e.course) === String(payment.courseId));
     if (courseIndex > -1) {
