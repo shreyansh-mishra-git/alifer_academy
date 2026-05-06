@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { apiGetCourse, apiMarkVideoComplete } from '@/lib/api';
 import PaymentModal from '@/components/PaymentModal';
 import AuthModal from '@/components/AuthModal';
+import SecurePDFModal from '@/components/SecurePDFModal';
 import { toast } from 'sonner';
 
 interface Video {
@@ -22,6 +23,13 @@ interface Video {
   order: number;
 }
 
+interface PDFResource {
+  _id: string;
+  title: string;
+  url?: string;
+  isLocked: boolean;
+}
+
 interface CourseData {
   _id: string;
   title: string;
@@ -32,6 +40,7 @@ interface CourseData {
   category: string;
   studentsCount: number;
   videos: Video[];
+  pdfs: PDFResource[];
   isEnrolled: boolean;
   isPaymentPending?: boolean;
 }
@@ -47,6 +56,8 @@ const CoursePage = () => {
   const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [selectedPdf, setSelectedPdf] = useState<PDFResource | null>(null);
+  const [pdfViewerOpen, setPdfViewerOpen] = useState(false);
 
   const isEnrolled = course?.isEnrolled ||
     (user?.enrolledCourses?.some((c: any) => (c.course?._id || c.course) === id) ?? false);
@@ -127,6 +138,16 @@ const CoursePage = () => {
   const handlePaymentSuccess = async () => {
     await refreshUser();
     await loadCourse();
+  };
+
+  const handlePdfView = (pdf: PDFResource) => {
+    if (!isEnrolled) {
+      toast.info('Please enroll to view these notes');
+      setPaymentOpen(true);
+      return;
+    }
+    setSelectedPdf(pdf);
+    setPdfViewerOpen(true);
   };
 
   if (loading) {
@@ -356,24 +377,40 @@ const CoursePage = () => {
                   Study Resources
                 </h3>
                 <div className="grid gap-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-border/50 bg-muted/20">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500">
-                          <BookOpen className="h-5 w-5" />
+                  {course.pdfs && course.pdfs.length > 0 ? (
+                    course.pdfs.map((pdf) => (
+                      <div key={pdf._id} className="flex items-center justify-between p-3 rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/30 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500">
+                            <BookOpen className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold">{pdf.title}</p>
+                            <p className="text-[10px] text-muted-foreground">PDF Document</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-semibold">Solution PDF Part {i}</p>
-                          <p className="text-[10px] text-muted-foreground">PDF Document • 2.4 MB</p>
-                        </div>
+                        {isEnrolled && pdf.url ? (
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="text-xs font-bold border-primary/30 text-primary hover:bg-primary/10"
+                            onClick={() => handlePdfView(pdf)}
+                          >
+                            Read Online
+                          </Button>
+                        ) : (
+                          <div className="flex items-center gap-2 text-muted-foreground pr-2">
+                            <Lock className="h-4 w-4" />
+                            <span className="text-[10px] font-bold uppercase tracking-tighter">Locked</span>
+                          </div>
+                        )}
                       </div>
-                      {isEnrolled ? (
-                        <Button size="sm" variant="outline" className="text-xs">Download</Button>
-                      ) : (
-                        <Lock className="h-4 w-4 text-muted-foreground mr-3" />
-                      )}
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground text-sm italic">
+                      No study resources available yet.
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
@@ -512,6 +549,14 @@ const CoursePage = () => {
         onClose={() => setAuthOpen(false)}
         defaultTab="login"
       />
+      {selectedPdf && (
+        <SecurePDFModal
+          isOpen={pdfViewerOpen}
+          onClose={() => setPdfViewerOpen(false)}
+          pdfUrl={selectedPdf.url || ''}
+          pdfTitle={selectedPdf.title}
+        />
+      )}
     </div>
   );
 };

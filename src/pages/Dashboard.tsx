@@ -379,7 +379,6 @@ const Dashboard = () => {
                   { label: 'Full Name', value: user?.name },
                   { label: 'Email', value: user?.email },
                   { label: 'Phone', value: user?.phone },
-                  { label: 'Age', value: user?.age },
                   { label: 'Enrolled Courses', value: user?.enrolledCourses?.length || 0 },
                   { label: 'Study Streak', value: `${user?.studyStreak || 0} days` },
                   { label: 'Hours Studied', value: `${Math.round(user?.hoursStudied || 0)} hrs` },

@@ -8,7 +8,7 @@ const { protect, adminOnly } = require('../middleware/auth');
 router.get('/', async (req, res) => {
   try {
     const courses = await Course.find({ isActive: true }).select(
-      '_id title description price originalPrice duration category image studentsCount videos'
+      '_id title description price originalPrice duration category image studentsCount videos pdfs'
     );
 
     // Strip videoId from locked videos for public listing
@@ -23,6 +23,11 @@ router.get('/', async (req, res) => {
         order: v.order,
         // Only include videoId for free videos
         videoId: v.isFree ? v.videoId : undefined,
+      }));
+      c.pdfs = (c.pdfs || []).map(p => ({
+        _id: p._id,
+        title: p.title,
+        isLocked: true // Always locked in public listing
       }));
       return c;
     });
@@ -120,6 +125,14 @@ router.get('/:id', async (req, res) => {
         videoId: hasAccess ? v.videoId : undefined,
       };
     });
+    
+    // Secure PDF Access
+    c.pdfs = (c.pdfs || []).map(pdf => ({
+      _id: pdf._id,
+      title: pdf.title,
+      url: isEnrolled ? pdf.url : undefined,
+      isLocked: !isEnrolled
+    }));
 
     res.json(c);
   } catch (error) {

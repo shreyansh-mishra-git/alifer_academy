@@ -19,6 +19,10 @@ const courseSchema = new mongoose.Schema(
     category: { type: String, default: 'General' },
     image: { type: String, default: '' },
     videos: [videoSchema],
+    pdfs: [{
+      title: { type: String, required: true },
+      url: { type: String, required: true },
+    }],
     isActive: { type: Boolean, default: true },
     studentsCount: { type: Number, default: 0 },
   },

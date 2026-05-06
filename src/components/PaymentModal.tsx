@@ -29,7 +29,7 @@ const PaymentModal = ({
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const UPI_ID = 'shikhan6@icici'; 
+  const UPI_ID = '9557370466@axl'; 
   const SUPPORT_NUMBER = '+91 97602 93095';
 
   const handleCopyUPI = () => {

@@ -1,53 +1,19 @@
-const express = require('express');
-const router = express.Router();
+require('dotenv').config();
+const mongoose = require('mongoose');
 const Course = require('../models/Course');
-const User = require('../models/User');
-const Payment = require('../models/Payment');
-const { protect, adminOnly } = require('../middleware/auth');
 
-// GET /api/admin/dashboard — summary for admin panel
-router.get('/dashboard', protect, adminOnly, async (req, res) => {
+const seed = async () => {
   try {
-    const totalUsers = await User.countDocuments();
-    const totalCourses = await Course.countDocuments();
-    const pendingPayments = await Payment.countDocuments({ status: 'pending' });
-    const approvedPayments = await Payment.countDocuments({ status: 'approved' });
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('Connected to MongoDB');
 
-    const recentPayments = await Payment.find({ status: 'pending' })
-      .populate('userId', '-password')
-      .populate('courseId', 'title price')
-      .sort({ createdAt: -1 })
-      .limit(10);
-
-    res.json({ totalUsers, totalCourses, pendingPayments, approvedPayments, recentPayments });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// GET /api/admin/users
-router.get('/users', protect, adminOnly, async (req, res) => {
-  try {
-    const users = await User.find({})
-      .select('-password')
-      .populate('enrolledCourses.course', 'title')
-      .sort({ createdAt: -1 });
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// POST /api/admin/seed-course — seed or update the courses
-router.post('/seed-course', protect, adminOnly, async (req, res) => {
-  try {
     const arjunaData = {
-      title: 'Unit 1 - ARJUNA 3.0',
-      description: 'Complete Unit 1 preparation for ARJUNA 3.0 with video solutions for DENM Question Bank.',
+      title: 'Unit 1 - Arjuna Batch C',
+      description: 'Complete Unit 1 preparation for Arjuna Batch with video solutions for DENM Question Bank.',
       price: 9,
       originalPrice: 1999,
       duration: '30 Days Access',
-      category: 'ARJUNA 3.0',
+      category: 'Arjuna Batch',
       image: '',
       videos: [
         { title: 'L-1-Unit-1-Part-1-DENM-Q.B.-From Q1 to Q10', videoId: 'iEiiKK60Hws', duration: '26 min', isFree: true, isLocked: false, order: 1 },
@@ -68,12 +34,12 @@ router.post('/seed-course', protect, adminOnly, async (req, res) => {
     };
 
     const dronaData = {
-      title: 'Unit 3 - DRONA 3.0',
-      description: 'Complete Unit 3 preparation for DRONA 3.0 with advanced lectures and resources.',
+      title: 'Unit 3 - Drona Batch C',
+      description: 'Complete Unit 3 preparation for Drona Batch with advanced lectures and resources.',
       price: 9,
       originalPrice: 1999,
       duration: '30 Days Access',
-      category: 'DRONA 3.0',
+      category: 'Drona Batch',
       image: '',
       videos: [
         { title: 'Drona Welcome', videoId: 'FJ4ltLZy3m4', duration: '10 min', isFree: true, isLocked: false, order: 1 },
@@ -90,49 +56,20 @@ router.post('/seed-course', protect, adminOnly, async (req, res) => {
       pdfs: []
     };
 
+    // Remove old courses
     await Course.deleteMany({ title: { $nin: [arjunaData.title, dronaData.title] } });
+    console.log('Removed old courses');
+
+    // Seed new courses
     await Course.findOneAndUpdate({ title: arjunaData.title }, arjunaData, { upsert: true, new: true });
     await Course.findOneAndUpdate({ title: dronaData.title }, dronaData, { upsert: true, new: true });
+    console.log('Seeded new courses');
 
-    res.status(201).json({ message: 'Courses seeded/updated successfully' });
+    process.exit(0);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error seeding course' });
+    console.error('Seed error:', error);
+    process.exit(1);
   }
-});
+};
 
-// POST /api/admin/enroll-manual — manually enroll a user in a course
-router.post('/enroll-manual', protect, adminOnly, async (req, res) => {
-  try {
-    const { userId, courseId } = req.body;
-    if (!userId || !courseId) return res.status(400).json({ message: 'userId and courseId are required' });
-
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    const course = await Course.findById(courseId);
-    if (!course) return res.status(404).json({ message: 'Course not found' });
-
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 30); // 30 days access
-
-    const courseIndex = user.enrolledCourses.findIndex(e => String(e.course) === String(courseId));
-    if (courseIndex > -1) {
-      user.enrolledCourses[courseIndex].expiresAt = expiresAt;
-      user.enrolledCourses[courseIndex].enrolledAt = new Date();
-    } else {
-      user.enrolledCourses.push({
-        course: courseId,
-        enrolledAt: new Date(),
-        expiresAt: expiresAt
-      });
-    }
-    await user.save();
-
-    res.json({ message: `Successfully enrolled ${user.name} in ${course.title}` });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-module.exports = router;
+seed();

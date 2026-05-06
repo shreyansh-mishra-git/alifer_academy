@@ -162,9 +162,6 @@ const AdminPanel = () => {
             <h1 className="font-bold text-lg">Admin Panel</h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleSeedCourse} className="gap-2 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hidden md:flex">
-              <Zap className="h-3.5 w-3.5" /> Seed Course
-            </Button>
             <Button variant="outline" size="sm" onClick={loadData} className="gap-2">
               <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} /> Refresh
             </Button>
@@ -285,8 +282,8 @@ const AdminPanel = () => {
                             </td>
                             <td className="px-6 py-4">
                               <div className="flex flex-col">
-                                <span className="text-sm font-medium">{payment.courseId?.title}</span>
-                                <span className="text-[10px] text-emerald-400 font-bold">₹{payment.courseId?.price}</span>
+                                <span className="text-sm font-medium">{payment.courseId?.title || 'Course Unavailable'}</span>
+                                <span className="text-[10px] text-emerald-400 font-bold">₹{payment.amount}</span>
                               </div>
                             </td>
                             <td className="px-6 py-4">
@@ -353,7 +350,6 @@ const AdminPanel = () => {
                                         <div className="space-y-2">
                                           <p className="text-xs flex items-center gap-2"><Phone size={12} className="text-muted-foreground" /> {payment.userId?.phone || 'N/A'}</p>
                                           <p className="text-xs flex items-center gap-2"><Calendar size={12} className="text-muted-foreground" /> Joined: {new Date(payment.userId?.createdAt).toLocaleDateString()}</p>
-                                          <p className="text-xs flex items-center gap-2"><Star size={12} className="text-muted-foreground" /> Age: {payment.userId?.age || 'N/A'}</p>
                                         </div>
                                       </div>
                                       <div className="space-y-4">
@@ -417,8 +413,9 @@ const AdminPanel = () => {
                           <div className="flex flex-col">
                             <span className="font-semibold text-sm">{u.name}</span>
                             <div className="flex flex-col text-[10px] text-muted-foreground">
-                              <span>{u.email}</span>
-                              <span>{u.phone}</span>
+                              <span className="flex items-center gap-1.5"><Mail size={10} /> {u.email}</span>
+                              <span className="flex items-center gap-1.5 font-bold text-primary"><Phone size={10} /> {u.phone}</span>
+                              <span className="flex items-center gap-1.5"><Calendar size={10} /> Joined: {new Date(u.createdAt).toLocaleDateString()}</span>
                             </div>
                           </div>
                         </div>
@@ -432,6 +429,16 @@ const AdminPanel = () => {
                           <div className="text-center">
                             <p className="text-xs font-bold">{u.studyStreak || 0}</p>
                             <p className="text-[9px] text-muted-foreground uppercase">Streak</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs font-bold">{u.completedVideos?.length || 0}</p>
+                            <p className="text-[9px] text-muted-foreground uppercase">Videos</p>
+                          </div>
+                          <div className="text-center">
+                            <p className={`text-xs font-bold ${u.subscriptionExpiry && new Date(u.subscriptionExpiry) > new Date() ? 'text-emerald-400' : 'text-red-400'}`}>
+                              {u.subscriptionExpiry ? new Date(u.subscriptionExpiry).toLocaleDateString() : 'N/A'}
+                            </p>
+                            <p className="text-[9px] text-muted-foreground uppercase">Expiry</p>
                           </div>
                         </div>
                       </td>

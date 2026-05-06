@@ -42,10 +42,7 @@ const getBaseStudents = (id: string) => {
 
 // Dynamic course naming based on video count
 const getCourseName = (course: CourseCard): string => {
-  const totalVideos = course.videos?.length || 0;
-  if (totalVideos === 3) return "Unit 1 - Arjuna Batch C";
-  if (totalVideos === 10) return "Unit 3 - Drona Batch C";
-  return course.title; // Fallback to the original title
+  return course.title; 
 };
 
 const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
@@ -138,8 +135,8 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
               
               // Determine image based on unit
               let imgSrc = course.image || FALLBACK_IMAGES[originalIndex % FALLBACK_IMAGES.length];
-              if (totalVideos === 3) imgSrc = denm1;
-              if (totalVideos === 10) imgSrc = denm3;
+              if (course.title.includes("Unit 1")) imgSrc = denm1;
+              if (course.title.includes("Unit 3")) imgSrc = denm3;
 
               // The actual course + 2 dummy ones
               return [
@@ -217,7 +214,7 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   </div>
                   <div className="p-6">
                     <h3 className="font-semibold text-sm mb-2 text-muted-foreground">
-                      {totalVideos === 3 ? "Unit 1 - Arjuna Batch B" : totalVideos === 10 ? "Unit 3 - Drona Batch B" : `${course.title} (Batch B)`}
+                      {course.title.includes('3.0') ? course.title.replace('3.0', '2.0 (Full)') : course.title + ' (Batch B)'}
                     </h3>
                     <div className="flex items-center justify-between text-[10px] mb-3 opacity-30 font-bold">
                       <span>Access: 30 Days</span>
@@ -248,7 +245,7 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                   </div>
                   <div className="p-6">
                     <h3 className="font-semibold text-sm mb-2 text-muted-foreground">
-                      {totalVideos === 3 ? "Unit 1 - Arjuna Batch A" : totalVideos === 10 ? "Unit 3 - Drona Batch A" : `${course.title} (Batch A)`}
+                      {course.title.includes('3.0') ? course.title.replace('3.0', '1.0 (Full)') : course.title + ' (Batch A)'}
                     </h3>
                     <div className="flex items-center justify-between text-[10px] mb-3 opacity-30 font-bold">
                       <span>Access: 30 Days</span>

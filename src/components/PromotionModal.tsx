@@ -76,7 +76,7 @@ const PromotionModal = ({ isOpen, onClose, onRegister }: PromotionModalProps) =>
                   <h2 className="text-lg md:text-xl font-display font-bold leading-tight">
                     Broadcasting <span className="text-primary italic">Unit 1 Solution</span>
                   </h2>
-                  <p className="text-xs text-white/60 mt-1 uppercase tracking-wider font-medium">Topic-wise Explanation • Pandava 3.0</p>
+                  <p className="text-xs text-white/60 mt-1 uppercase tracking-wider font-medium">Topic-wise Explanation • ARJUNA 3.0</p>
                 </div>
 
                 {/* Timer - Compact */}
