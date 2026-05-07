@@ -4,13 +4,23 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import denm1 from "@/assets/DENM UNIT 1.jpg";
 
 
-const posters = [
+interface PosterItem {
+  title: string;
+  subtitle: string;
+  gradient?: string;
+  image?: string;
+}
+
+const posters: PosterItem[] = [
   { title: "UPSC 2025 Batch Open", subtitle: "Early bird discount - 30% off!", gradient: "from-primary/20 to-blue-600/20" },
   { title: "NDA Crash Course", subtitle: "Start your defence journey today", gradient: "from-secondary/20 to-orange-600/20" },
   { title: "Free GATE Webinar", subtitle: "This Saturday at 7PM", gradient: "from-accent/20 to-purple-600/20" },
   { title: "Scholarship Test", subtitle: "Win up to 100% fee waiver", gradient: "from-emerald-500/20 to-teal-600/20" },
-  { title: "New Batch Launch", subtitle: "Join our most successful preparation program", image: denm1 },
+  { title: "Unit 2 Batch 3.0", subtitle: "Coming Soon", gradient: "from-blue-600/20 to-indigo-900/20" },
+  { title: "Unit 4 Batch 3.0", subtitle: "Coming Soon", gradient: "from-orange-600/20 to-amber-900/20" },
+  { title: "Unit 5 Batch 3.0", subtitle: "Coming Soon", gradient: "from-red-600/20 to-rose-900/20" },
 ];
+
 
 const PostersCarousel = () => {
   const [current, setCurrent] = useState(0);
@@ -57,6 +67,11 @@ const PostersCarousel = () => {
                   </>
                 )}
                 <div className="relative z-10">
+                  {posters[current].subtitle === "Coming Soon" && (
+                    <div className="inline-flex items-center gap-2 bg-yellow-400/20 border border-yellow-400/50 text-yellow-300 text-xs font-bold px-4 py-1 rounded-full mb-3 animate-pulse">
+                      🚀 COMING SOON
+                    </div>
+                  )}
                   <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-2 drop-shadow-lg">{posters[current].title}</h3>
                   <p className="text-white/80 drop-shadow-md">{posters[current].subtitle}</p>
                 </div>

@@ -43,7 +43,7 @@ const slides: Slide[] = [
   {
     id: 2,
     exam: "UNIT 2",
-    title: "Unit 2 Mastery",
+    title: "Unit 2 - VAJRA 2.0",
     subtitle: "In-depth video solutions and practice material for Unit 2 modules",
     tag: "📚 Academic Excellence",
     cta: "Join Unit 2",
@@ -69,7 +69,7 @@ const slides: Slide[] = [
   {
     id: 4,
     exam: "UNIT 4",
-    title: "Unit 4 Special",
+    title: "Unit 4 - AGNI 2.0",
     subtitle: "Complete video solutions for Unit 4 academic modules",
     tag: "⚡ High Velocity",
     cta: "Join Unit 4",
@@ -82,7 +82,7 @@ const slides: Slide[] = [
   {
     id: 5,
     exam: "UNIT 5",
-    title: "Unit 5 Intensive",
+    title: "Unit 5 - BRAHMASTRA 2.0",
     subtitle: "The ultimate guide to acing Unit 5 topics",
     tag: "🚀 Fast Track",
     cta: "Join Unit 5",
