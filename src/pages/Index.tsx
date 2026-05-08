@@ -40,11 +40,7 @@ const Index = () => {
   };
 
   const handleGetStarted = () => {
-    if (!isLoggedIn) {
-      setAuthOpen(true);
-    } else {
-      scrollToCourses();
-    }
+    scrollToCourses();
   };
 
   return (
