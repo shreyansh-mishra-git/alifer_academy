@@ -72,22 +72,18 @@ router.get('/:id', async (req, res) => {
         if (currentUser) {
           const now = new Date();
           
-          if (currentUser.isAdmin) {
-            isEnrolled = true;
-          } else {
-            // Check if user ever had this course
-            const enrollment = currentUser.enrolledCourses.find(e => String(e.course) === String(course._id));
-            
-            if (enrollment) {
-              if (!enrollment.expiresAt || enrollment.expiresAt > now) {
-                isEnrolled = true;
-              } else {
-                isExpired = true;
-              }
-            } else if (currentUser.subscriptionExpiry && currentUser.subscriptionExpiry < now) {
-              // Global subscription expired
+          // Check if user ever had this course
+          const enrollment = currentUser.enrolledCourses.find(e => String(e.course) === String(course._id));
+          
+          if (enrollment) {
+            if (!enrollment.expiresAt || enrollment.expiresAt > now) {
+              isEnrolled = true;
+            } else {
               isExpired = true;
             }
+          } else if (currentUser.subscriptionExpiry && currentUser.subscriptionExpiry < now) {
+            // Global subscription expired
+            isExpired = true;
           }
           
           if (!isEnrolled && !isExpired) {
