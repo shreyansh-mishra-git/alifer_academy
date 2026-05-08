@@ -67,16 +67,16 @@ const PromotionModal = ({ isOpen, onClose, onRegister }: PromotionModalProps) =>
 
             {/* Content Section (Stacked below image) */}
             <div className="p-5 md:p-6 text-white bg-zinc-900 border-t border-white/10 relative">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="mb-2 flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-tighter">
+              <div className="flex flex-col items-center text-center gap-6">
+                <div className="flex-1 text-center">
+                  <div className="mb-2 flex items-center justify-center gap-2 text-primary font-bold text-[10px] uppercase tracking-tighter">
                     <Bell size={10} className="animate-pulse" /> Limited Time Offer
                   </div>
                   
                   <h2 className="text-lg md:text-xl font-display font-bold leading-tight">
                     Broadcasting <span className="text-primary italic">Unit 1 Solution</span>
                   </h2>
-                  <p className="text-xs text-white/60 mt-1 uppercase tracking-wider font-medium">Topic-wise Explanation • ARJUNA 3.0</p>
+                  <p className="text-xs text-white/60 mt-1 uppercase tracking-wider font-medium">Topic-wise Explanation • <span className="font-black text-primary text-sm tracking-widest ml-1">ARJUNA 4.0</span></p>
                 </div>
 
                 {/* Timer - Compact */}
