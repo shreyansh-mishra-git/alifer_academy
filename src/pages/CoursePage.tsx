@@ -59,7 +59,7 @@ const CoursePage = () => {
   const [selectedPdf, setSelectedPdf] = useState<PDFResource | null>(null);
   const [pdfViewerOpen, setPdfViewerOpen] = useState(false);
 
-  const isEnrolled = course?.isEnrolled ||
+  const isEnrolled = course?.isEnrolled || user?.isAdmin ||
     (user?.enrolledCourses?.some((c: any) => (c.course?._id || c.course) === id) ?? false);
 
   const [fakeStudents] = useState(() => Math.floor(Math.random() * 51) + 100);
