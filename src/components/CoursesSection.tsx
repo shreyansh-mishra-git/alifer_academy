@@ -251,30 +251,7 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                         </div>
                       </motion.div>
                       ) : (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          whileInView={{ opacity: 1 }}
-                          viewport={{ once: true }}
-                          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg overflow-hidden hover-lift transition-all duration-300"
-                        >
-                          <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative">
-                            <img src={img} alt={`Unit ${unit} - ${name} ${latest}`} className="w-full h-full object-cover object-top" />
-                          </div>
-                          <div className="p-6">
-                            <h3 className="font-semibold text-base md:text-lg mb-2">Unit {unit} - <span className="font-black text-primary">{name} {latest}</span></h3>
-                            <div className="flex items-center justify-between text-[10px] mb-3 font-bold text-muted-foreground">
-                              <span>Access: 30 Days</span>
-                              <span>100+ Enrolled</span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs mb-3">
-                              <span className="font-bold text-sm text-primary">₹{price}<span className="text-[10px] text-muted-foreground ml-1">/month</span></span>
-                              <span className="line-through text-muted-foreground">₹{originalPrice}</span>
-                            </div>
-                            <Button className="w-full text-sm" onClick={() => navigate('/login')}>
-                              Enroll Now
-                            </Button>
-                          </div>
-                        </motion.div>
+                        <DummyCourseCard title={`Unit ${unit} - ${name} ${latest}`} image={img} price={price} originalPrice={originalPrice} />
                       )
                     )}
 
