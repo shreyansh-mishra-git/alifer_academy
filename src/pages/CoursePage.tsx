@@ -186,7 +186,7 @@ const CoursePage = () => {
         </button>
         <div className="h-4 w-px bg-border" />
         <div className="flex-1 min-w-0">
-          <h1 className="text-sm font-semibold truncate">{course.title}</h1>
+          <h1 className="text-sm font-semibold truncate">{course.title.replace(/(ARJUNA|DRONA|VAJRA|AGNI|BRAHMASTRA)\s*\d+\.\d+/i, '').trim()} <span className="font-black text-primary">{(course.title.match(/(ARJUNA|DRONA|VAJRA|AGNI|BRAHMASTRA)\s*\d+\.\d+/i) || [''])[0]}</span></h1>
         </div>
         <div className="flex items-center gap-2">
           {isEnrolled ? (
