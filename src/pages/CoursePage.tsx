@@ -257,10 +257,10 @@ const CoursePage = () => {
                   >
                     <iframe
                       className="w-full h-full relative z-0 pointer-events-auto"
-                      src={`https://www.youtube-nocookie.com/embed/${activeVideo.videoId}?modestbranding=1&rel=0&controls=1&disablekb=1&fs=0&iv_load_policy=3&autoplay=1`}
+                      src={`https://www.youtube.com/embed/${activeVideo.videoId}?modestbranding=1&rel=0&controls=1&disablekb=1&fs=0&iv_load_policy=3&autoplay=1`}
                       title={activeVideo.title}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
+                      sandbox="allow-same-origin allow-scripts allow-presentation allow-forms"
                     />
                   </motion.div>
                 ) : (

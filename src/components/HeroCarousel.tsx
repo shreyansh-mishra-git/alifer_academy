@@ -30,10 +30,10 @@ const slides: Slide[] = [
   {
     id: 1,
     exam: "UNIT 1",
-    title: "Unit 1 - ARJUNA 4.0",
-    subtitle: "Topic-wise Explanation • ARJUNA 4.0",
+    title: "Unit 1 - ARJUNA 3.0",
+    subtitle: "Topic-wise Explanation • ARJUNA 3.0",
     tag: "🏗️ Building Foundations",
-    cta: "Join ARJUNA 4.0",
+    cta: "Join ARJUNA 3.0",
     gradient: "from-blue-900 via-indigo-900 to-purple-900",
     accentColor: "#60a5fa",
     icon: "📖",
