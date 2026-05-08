@@ -11,7 +11,7 @@ const seed = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
 
-    const arjuna3Data = {
+    const arjunaData = {
       title: 'Unit 1 - ARJUNA 3.0',
       description: 'Complete Unit 1 preparation for ARJUNA 3.0 with video solutions for DENM Question Bank.',
       price: 9,
@@ -19,7 +19,6 @@ const seed = async () => {
       duration: '30 Days Access',
       category: 'ARJUNA 3.0',
       image: '',
-      isFull: true,
       videos: [
         { title: 'L-1-Unit-1-Part-1-DENM-Q.B.-From Q1 to Q10', videoId: 'iEiiKK60Hws', duration: '26 min', isFree: true, isLocked: false, order: 1 },
         { title: 'L-2-Unit-1-Part-2-DENM-Q.B.-From Q11 to Q20', videoId: 'eew_WQiqF4c', duration: '25 min', isFree: false, isLocked: true, order: 2 },
@@ -38,19 +37,6 @@ const seed = async () => {
       ]
     };
 
-    const arjuna4Data = {
-      title: 'Unit 1 - ARJUNA 4.0',
-      description: 'The latest ARJUNA 4.0 batch for Unit 1. Enrollment is now open!',
-      price: 9,
-      originalPrice: 1999,
-      duration: '30 Days Access',
-      category: 'ARJUNA 4.0',
-      image: '',
-      isFull: false,
-      videos: arjuna3Data.videos,
-      pdfs: arjuna3Data.pdfs
-    };
-
     const dronaData = {
       title: 'Unit 3 - DRONA 3.0',
       description: 'Complete Unit 3 preparation for DRONA 3.0 with advanced lectures and resources.',
@@ -60,16 +46,16 @@ const seed = async () => {
       category: 'DRONA 3.0',
       image: '',
       videos: [
-        { title: 'PDE L 1 CH 1 Type 1&2 Formation of PDE by Eliminating Arbitrary Constant and Arbitrary Function', videoId: '9t-B6pt2K6I', duration: '26 min', isFree: true, isLocked: false, order: 1 },
-        { title: 'PDE L 2 CH 1 Type 3&4 Solution of Non Homogeneous & Homogeneous PDE by Direct Integration Method', videoId: 'WZ0WgR1QVso', duration: '25 min', isFree: false, isLocked: true, order: 2 },
-        { title: 'PDE L 3 CH 2 Type 1 Lagrang\'PDE Part 1', videoId: '5TEN_q1PzNI', duration: '32 min', isFree: false, isLocked: true, order: 3 },
-        { title: 'PDE L 4 CH 2 Type 1 Lagrang\'PDE Part 2', videoId: 'dUpyhgb83OE', duration: '31 min', isFree: false, isLocked: true, order: 4 },
-        { title: 'PDE L 5 CH 3 Type 1 Standard Forms of Non Linear PDEs', videoId: 'CfGb8LywUgs', duration: '16 min', isFree: false, isLocked: true, order: 5 },
-        { title: 'PDE L 6 CH 3 Type 2 Charpit\'s Method', videoId: 'j92gr-LYWHg', duration: '33 min', isFree: false, isLocked: true, order: 6 },
-        { title: 'PDE L 7 CH 4 Type 1&2 Classification of PDE & Homogeneous PDEs', videoId: 'gfZTbGjFXr4', duration: '49 min', isFree: false, isLocked: true, order: 7 },
-        { title: 'PDE L 8 CH 4 Type 3 Homogeneous FD,D\'=fx,y', videoId: 'lYAcUj8znWM', duration: '12 min', isFree: false, isLocked: true, order: 8 },
-        { title: 'PDE L 9 CH 4 Type 4 Non Homogeneous PDE of the Form FD,D\'=fx,y', videoId: 'kQT4Rvb7-hM', duration: '15 min', isFree: false, isLocked: true, order: 9 },
-        { title: 'PDE L 10 CH 4 Type 5 Euler\'s PDE', videoId: 'kg2EO4hiKBk', duration: '14 min', isFree: false, isLocked: true, order: 10 },
+        { title: 'Drona Welcome', videoId: 'FJ4ltLZy3m4', duration: '10 min', isFree: true, isLocked: false, order: 1 },
+        { title: 'Lecture 2', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 2 },
+        { title: 'Lecture 3', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 3 },
+        { title: 'Lecture 4', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 4 },
+        { title: 'Lecture 5', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 5 },
+        { title: 'Lecture 6', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 6 },
+        { title: 'Lecture 7', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 7 },
+        { title: 'Lecture 8', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 8 },
+        { title: 'Lecture 9', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 9 },
+        { title: 'Lecture 10', videoId: 'REPLACE_ME', duration: '45 min', isFree: false, isLocked: true, order: 10 },
       ],
       pdfs: []
     };
@@ -80,10 +66,7 @@ const seed = async () => {
     // await Course.deleteMany({ title: { $nin: [arjunaData.title, dronaData.title] } });
     
     console.log('Upserting ARJUNA 3.0...');
-    await Course.findOneAndUpdate({ title: arjuna3Data.title }, arjuna3Data, { upsert: true, new: true });
-
-    console.log('Upserting ARJUNA 4.0...');
-    await Course.findOneAndUpdate({ title: arjuna4Data.title }, arjuna4Data, { upsert: true, new: true });
+    await Course.findOneAndUpdate({ title: arjunaData.title }, arjunaData, { upsert: true, new: true });
     
     console.log('Upserting DRONA 3.0...');
     await Course.findOneAndUpdate({ title: dronaData.title }, dronaData, { upsert: true, new: true });

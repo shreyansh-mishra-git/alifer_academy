@@ -173,29 +173,29 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
         {!loading && (
           <div className="space-y-16">
             {[
-              { unit: 1, series: "ARJUNA",     latest: "4.0", img: denm1, showLatest: true,  basePrice: 9,   baseOriginalPrice: 1999 },
-              { unit: 2, series: "VAJRA",      latest: "3.0", img: denm2, showLatest: false, basePrice: 9,   baseOriginalPrice: 1999 },
-              { unit: 3, series: "DRONA",      latest: "3.0", img: denm3, showLatest: true,  basePrice: 9,   baseOriginalPrice: 1999 },
-              { unit: 4, series: "AGNI",       latest: "3.0", img: denm4, showLatest: false, basePrice: 9,   baseOriginalPrice: 1999 },
-              { unit: 5, series: "BRAHMASTRA", latest: "3.0", img: denm5, showLatest: false, basePrice: 9,   baseOriginalPrice: 1999 },
-            ].map(({ unit, series, latest, img, showLatest, basePrice, baseOriginalPrice }) => {
+              { unit: 1, name: "ARJUNA",      img: denm1, showLatest: true,  basePrice: 499, baseOriginalPrice: 999 },
+              { unit: 2, name: "VAJRA",        img: denm2, showLatest: false, basePrice: 9,   baseOriginalPrice: 999 },
+              { unit: 3, name: "DRONA",        img: denm3, showLatest: true,  basePrice: 499, baseOriginalPrice: 999 },
+              { unit: 4, name: "AGNI",         img: denm4, showLatest: false, basePrice: 9,   baseOriginalPrice: 999 },
+              { unit: 5, name: "BRAHMASTRA",   img: denm5, showLatest: false, basePrice: 9,   baseOriginalPrice: 999 },
+            ].map(({ unit, name, img, showLatest, basePrice, baseOriginalPrice }) => {
               const liveCourse = courses.find(c =>
-                c.title.toLowerCase().includes(`unit ${unit}`) && c.title.toLowerCase().includes(latest)
+                c.title.toLowerCase().includes(`unit ${unit}`)
               );
               const enrolled = liveCourse ? isEnrolled(liveCourse._id) : false;
               const freeVideos = liveCourse?.videos?.filter(v => v.isFree).length || 0;
               const price = liveCourse?.price ?? basePrice;
               const originalPrice = liveCourse?.originalPrice ?? baseOriginalPrice;
               const discount = liveCourse ? Math.round((1 - price / originalPrice) * 100) : 0;
-              const liveTitle = liveCourse?.title ?? `Unit ${unit} - ${series} ${latest}`;
+              const liveTitle = liveCourse?.title ?? `Unit ${unit} - ${name} 3.0`;
 
               return (
                 <div key={unit} className="space-y-8">
                   <h3 className="text-2xl font-display font-bold border-l-4 border-primary pl-4">
-                    {series} Series
+                    {name} Series
                   </h3>
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 md:gap-12 px-4 md:px-0">
-                    {/* Latest Batch */}
+                    {/* 3.0 — show only for units with showLatest=true */}
                     {showLatest && (
                       liveCourse ? (
                       <motion.div
@@ -251,24 +251,15 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                         </div>
                       </motion.div>
                       ) : (
-                        <DummyCourseCard title={`Unit ${unit} - ${series} ${latest}`} image={img} price={price} originalPrice={originalPrice} />
+                        <DummyCourseCard title={`Unit ${unit} - ${name} 3.0`} image={img} price={price} originalPrice={originalPrice} />
                       )
                     )}
 
-                    {/* Previous Batches (Dummy/Full) */}
-                    {series === "ARJUNA" ? (
-                      <>
-                        <DummyCourseCard title={`Unit ${unit} - ${series} 3.1`} image={img} price={price} originalPrice={originalPrice} />
-                        <DummyCourseCard title={`Unit ${unit} - ${series} 3.0`} image={img} price={price} originalPrice={originalPrice} />
-                      </>
-                    ) : (
-                      <>
-                        {latest === "3.0" && (
-                          <DummyCourseCard title={`Unit ${unit} - ${series} 2.0`} image={img} price={price} originalPrice={originalPrice} />
-                        )}
-                        <DummyCourseCard title={`Unit ${unit} - ${series} 1.0`} image={img} price={price} originalPrice={originalPrice} />
-                      </>
-                    )}
+                    {/* Dummy 2.0 */}
+                    <DummyCourseCard title={`Unit ${unit} - ${name} 2.0`} image={img} price={price} originalPrice={originalPrice} />
+
+                    {/* Dummy 1.0 */}
+                    <DummyCourseCard title={`Unit ${unit} - ${name} 1.0`} image={img} price={price} originalPrice={originalPrice} />
                   </div>
                 </div>
               );
