@@ -44,7 +44,7 @@ const getBaseStudents = (id: string) => {
 
 // Dynamic course naming based on video count
 const getCourseName = (course: CourseCard): string => {
-  return course.title; 
+  return course.title;
 };
 
 // Reusable dummy "Batch Full" card
@@ -173,11 +173,11 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
         {!loading && (
           <div className="space-y-16">
             {[
-              { unit: 1, name: "ARJUNA",      img: denm1, showLatest: true,  basePrice: 499, baseOriginalPrice: 999 },
-              { unit: 2, name: "VAJRA",        img: denm2, showLatest: false, basePrice: 9,   baseOriginalPrice: 999 },
-              { unit: 3, name: "DRONA",        img: denm3, showLatest: true,  basePrice: 499, baseOriginalPrice: 999 },
-              { unit: 4, name: "AGNI",         img: denm4, showLatest: false, basePrice: 9,   baseOriginalPrice: 999 },
-              { unit: 5, name: "BRAHMASTRA",   img: denm5, showLatest: false, basePrice: 9,   baseOriginalPrice: 999 },
+              { unit: 1, name: "ARJUNA", img: denm1, showLatest: true, basePrice: 9, baseOriginalPrice: 1999 },
+              { unit: 2, name: "VAJRA", img: denm2, showLatest: false, basePrice: 9, baseOriginalPrice: 2499 },
+              { unit: 3, name: "DRONA", img: denm3, showLatest: true, basePrice: 9, baseOriginalPrice: 1999 },
+              { unit: 4, name: "AGNI", img: denm4, showLatest: true, basePrice: 12, baseOriginalPrice: 2499 },
+              { unit: 5, name: "BRAHMASTRA", img: denm5, showLatest: true, basePrice: 13, baseOriginalPrice: 2899 },
             ].map(({ unit, name, img, showLatest, basePrice, baseOriginalPrice }) => {
               const liveCourse = courses.find(c =>
                 c.title.toLowerCase().includes(`unit ${unit}`)
@@ -198,58 +198,58 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
                     {/* 3.0 — show only for units with showLatest=true */}
                     {showLatest && (
                       liveCourse ? (
-                      <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg overflow-hidden cursor-pointer group hover-lift transition-all duration-300"
-                        onClick={() => handleViewCourse(liveCourse)}
-                      >
-                        <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative">
-                          <motion.img
-                            src={img}
-                            alt={liveTitle}
-                            loading="lazy"
-                            className="w-full h-full object-cover object-top scale-95 group-hover:scale-100 transition-transform duration-500"
-                          />
-                          {discount > 0 && (
-                            <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                              {discount}% OFF
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg overflow-hidden cursor-pointer group hover-lift transition-all duration-300"
+                          onClick={() => handleViewCourse(liveCourse)}
+                        >
+                          <div className="w-full aspect-[4/3] overflow-hidden rounded-t-xl relative">
+                            <motion.img
+                              src={img}
+                              alt={liveTitle}
+                              loading="lazy"
+                              className="w-full h-full object-cover object-top scale-95 group-hover:scale-100 transition-transform duration-500"
+                            />
+                            {discount > 0 && (
+                              <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                {discount}% OFF
+                              </div>
+                            )}
+                            {enrolled && (
+                              <div className="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                Enrolled ✓
+                              </div>
+                            )}
+                            {freeVideos > 0 && !enrolled && (
+                              <div className="absolute bottom-2 left-2 flex items-center gap-1 text-[10px] bg-black/70 text-white px-2 py-0.5 rounded-full">
+                                <Play className="h-2.5 w-2.5 fill-current" /> {freeVideos} free preview
+                              </div>
+                            )}
+                            <div className="absolute bottom-2 right-2 bg-red-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-lg">
+                              <Clock className="h-2 w-2 animate-spin" /> ENDS SOON: {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
                             </div>
-                          )}
-                          {enrolled && (
-                            <div className="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                              Enrolled ✓
-                            </div>
-                          )}
-                          {freeVideos > 0 && !enrolled && (
-                            <div className="absolute bottom-2 left-2 flex items-center gap-1 text-[10px] bg-black/70 text-white px-2 py-0.5 rounded-full">
-                              <Play className="h-2.5 w-2.5 fill-current" /> {freeVideos} free preview
-                            </div>
-                          )}
-                          <div className="absolute bottom-2 right-2 bg-red-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-lg">
-                            <Clock className="h-2 w-2 animate-spin" /> ENDS SOON: {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
                           </div>
-                        </div>
-                        <div className="p-6">
-                          <h3 className="font-semibold text-base md:text-lg mb-2">{liveTitle}</h3>
-                          <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{liveCourse.description}</p>
-                          <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-3">
-                            <span className="flex items-center gap-1 font-bold"><Clock className="h-2.5 w-2.5" />Access: 30 Days</span>
-                            <span className="flex items-center gap-1 font-bold"><Users className="h-2.5 w-2.5" />{getBaseStudents(liveCourse._id) + (liveCourse.studentsCount || 0)}+ Enrolled</span>
-                          </div>
-                          <div className="flex items-center justify-between mb-3">
-                            <div>
-                              <span className="font-bold text-sm text-primary">₹{price}</span>
-                              <span className="text-[10px] text-muted-foreground ml-1">/month</span>
+                          <div className="p-6">
+                            <h3 className="font-semibold text-base md:text-lg mb-2">{liveTitle}</h3>
+                            <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{liveCourse.description}</p>
+                            <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-3">
+                              <span className="flex items-center gap-1 font-bold"><Clock className="h-2.5 w-2.5" />Access: 30 Days</span>
+                              <span className="flex items-center gap-1 font-bold"><Users className="h-2.5 w-2.5" />{getBaseStudents(liveCourse._id) + (liveCourse.studentsCount || 0)}+ Enrolled</span>
                             </div>
-                            <span className="text-[10px] line-through text-muted-foreground">₹{originalPrice}</span>
+                            <div className="flex items-center justify-between mb-3">
+                              <div>
+                                <span className="font-bold text-sm text-primary">₹{price}</span>
+                                <span className="text-[10px] text-muted-foreground ml-1">/month</span>
+                              </div>
+                              <span className="text-[10px] line-through text-muted-foreground">₹{originalPrice}</span>
+                            </div>
+                            <Button className="w-full text-sm" variant={enrolled ? "outline" : "default"} onClick={(e) => handleEnroll(e, liveCourse)}>
+                              {enrolled ? <><Play className="mr-1 h-4 w-4 fill-current" /> Continue</> : "Enroll Now"}
+                            </Button>
                           </div>
-                          <Button className="w-full text-sm" variant={enrolled ? "outline" : "default"} onClick={(e) => handleEnroll(e, liveCourse)}>
-                            {enrolled ? <><Play className="mr-1 h-4 w-4 fill-current" /> Continue</> : "Enroll Now"}
-                          </Button>
-                        </div>
-                      </motion.div>
+                        </motion.div>
                       ) : (
                         <DummyCourseCard title={`Unit ${unit} - ${name} 3.0`} image={img} price={price} originalPrice={originalPrice} />
                       )
