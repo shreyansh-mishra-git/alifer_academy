@@ -540,6 +540,7 @@ const CoursePage = () => {
           onClose={() => setPaymentOpen(false)}
           courseId={course._id}
           courseTitle={course.title}
+          price={course.price}
           originalPrice={course.originalPrice}
           onSuccess={handlePaymentSuccess}
         />

@@ -12,6 +12,7 @@ interface PaymentModalProps {
   onClose: () => void;
   courseId: string;
   courseTitle: string;
+  price: number;
   originalPrice: number;
   onSuccess?: () => void;
 }
@@ -19,9 +20,8 @@ interface PaymentModalProps {
 const QR_IMAGE_URL = '/payment-qr.jpg';
 
 const PaymentModal = ({
-  open, onClose, courseId, courseTitle, originalPrice, onSuccess
+  open, onClose, courseId, courseTitle, price: finalPrice, originalPrice, onSuccess
 }: PaymentModalProps) => {
-  const finalPrice = 9; 
   const { refreshUser } = useAuth();
   const [showPayment, setShowPayment] = useState(true); 
   const [step, setStep] = useState<'qr' | 'verify' | 'done'>('qr');

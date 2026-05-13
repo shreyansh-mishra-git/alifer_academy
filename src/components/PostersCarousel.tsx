@@ -17,8 +17,8 @@ const posters: PosterItem[] = [
   { title: "Free GATE Webinar", subtitle: "This Saturday at 7PM", gradient: "from-accent/20 to-purple-600/20" },
   { title: "Scholarship Test", subtitle: "Win up to 100% fee waiver", gradient: "from-emerald-500/20 to-teal-600/20" },
   { title: "Unit 2 Batch 3.0", subtitle: "Coming Soon", gradient: "from-blue-600/20 to-indigo-900/20" },
-  { title: "Unit 4 Batch 3.0", subtitle: "Coming Soon", gradient: "from-orange-600/20 to-amber-900/20" },
-  { title: "Unit 5 Batch 3.0", subtitle: "Coming Soon", gradient: "from-red-600/20 to-rose-900/20" },
+  { title: "Unit 4 Batch 3.0", subtitle: "Arrived", gradient: "from-orange-600/20 to-amber-900/20" },
+  { title: "Unit 5 Batch 3.0", subtitle: "Arrived", gradient: "from-red-600/20 to-rose-900/20" },
 ];
 
 
@@ -58,10 +58,10 @@ const PostersCarousel = () => {
               >
                 {posters[current].image && (
                   <>
-                    <img 
-                      src={posters[current].image} 
+                    <img
+                      src={posters[current].image}
                       alt={posters[current].title}
-                      className="absolute inset-0 w-full h-full object-cover opacity-60" 
+                      className="absolute inset-0 w-full h-full object-cover opacity-60"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                   </>
