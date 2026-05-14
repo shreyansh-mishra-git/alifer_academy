@@ -174,10 +174,10 @@ const CoursesSection = ({ onAuthRequired }: CoursesSectionProps) => {
           <div className="space-y-16">
             {[
               { unit: 1, name: "ARJUNA", img: denm1, showLatest: true, basePrice: 9, baseOriginalPrice: 1999 },
-              { unit: 2, name: "VAJRA", img: denm2, showLatest: false, basePrice: 9, baseOriginalPrice: 2499 },
-              { unit: 3, name: "DRONA", img: denm3, showLatest: true, basePrice: 9, baseOriginalPrice: 1999 },
+              { unit: 2, name: "VAJRA", img: denm2, showLatest: false, basePrice: 10, baseOriginalPrice: 1999 },
+              { unit: 3, name: "DRONA", img: denm3, showLatest: true, basePrice: 11, baseOriginalPrice: 2499 },
               { unit: 4, name: "AGNI", img: denm4, showLatest: true, basePrice: 12, baseOriginalPrice: 2499 },
-              { unit: 5, name: "BRAHMASTRA", img: denm5, showLatest: true, basePrice: 13, baseOriginalPrice: 2899 },
+              { unit: 5, name: "BRAHMASTRA", img: denm5, showLatest: true, basePrice: 13, baseOriginalPrice: 2999 },
             ].map(({ unit, name, img, showLatest, basePrice, baseOriginalPrice }) => {
               const liveCourse = courses.find(c =>
                 c.title.toLowerCase().includes(`unit ${unit}`)

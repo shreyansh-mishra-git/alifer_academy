@@ -23,7 +23,7 @@ const seedUnit3 = async () => {
       description: 'Comprehensive solutions for Unit 3 topics. Includes detailed video explanations and practice PDFs.',
       price: 9,
       originalPrice: 1999,
-      duration: 'Lifetime Access',
+      duration: '30 Days',
       category: 'Solutions',
       isActive: true,
       studentsCount: 0,

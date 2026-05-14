@@ -42,6 +42,7 @@ interface CourseData {
   videos: Video[];
   pdfs: PDFResource[];
   isEnrolled: boolean;
+  isExpired?: boolean;
   isPaymentPending?: boolean;
 }
 
@@ -59,8 +60,9 @@ const CoursePage = () => {
   const [selectedPdf, setSelectedPdf] = useState<PDFResource | null>(null);
   const [pdfViewerOpen, setPdfViewerOpen] = useState(false);
 
-  const isEnrolled = course?.isEnrolled ||
-    (user?.enrolledCourses?.some((c: any) => (c.course?._id || c.course) === id) ?? false);
+  const isEnrolled = course 
+    ? course.isEnrolled 
+    : (user?.enrolledCourses?.some((c: any) => (c.course?._id || c.course) === id) ?? false);
 
   const [fakeStudents] = useState(() => Math.floor(Math.random() * 51) + 100);
 

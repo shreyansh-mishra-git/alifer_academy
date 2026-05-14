@@ -70,7 +70,7 @@ router.post('/seed-course', protect, adminOnly, async (req, res) => {
     const dronaData = {
       title: 'Unit 3 - DRONA 3.0',
       description: 'Complete Unit 3 preparation for DRONA 3.0 with advanced lectures and resources.',
-      price: 9,
+      price: 11,
       originalPrice: 1999,
       duration: '30 Days Access',
       category: 'DRONA 3.0',

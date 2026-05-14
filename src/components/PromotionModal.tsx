@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Bell, Zap, ArrowRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import denm1 from "@/assets/DENM UNIT 1.jpg";
+import denm5 from "@/assets/DENM UNIT 5.jpg";
 
 interface PromotionModalProps {
   isOpen: boolean;
@@ -58,7 +58,7 @@ const PromotionModal = ({ isOpen, onClose, onRegister }: PromotionModalProps) =>
             {/* Banner Image - FULL VIEW (No Cropping) */}
             <div className="w-full bg-black">
               <img
-                src={denm1}
+                src={denm5}
                 alt="Promotion Banner"
                 className="w-full h-auto block" // Removed object-cover/contain to let it show naturally
                 style={{ maxHeight: '70vh' }}
@@ -72,11 +72,11 @@ const PromotionModal = ({ isOpen, onClose, onRegister }: PromotionModalProps) =>
                   <div className="mb-2 flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-tighter">
                     <Bell size={10} className="animate-pulse" /> Limited Time Offer
                   </div>
-                  
+
                   <h2 className="text-lg md:text-xl font-display font-bold leading-tight">
-                    Broadcasting <span className="text-primary italic">Unit 1 Solution</span>
+                    Broadcasting <span className="text-primary italic">Unit 5 Solution</span>
                   </h2>
-                  <p className="text-xs text-white/60 mt-1 uppercase tracking-wider font-medium">Topic-wise Explanation • ARJUNA 3.0</p>
+                  <p className="text-xs text-white/60 mt-1 uppercase tracking-wider font-medium">Topic-wise Explanation • BRAHMASTRA 3.0</p>
                 </div>
 
                 {/* Timer - Compact */}
@@ -118,7 +118,7 @@ const PromotionModal = ({ isOpen, onClose, onRegister }: PromotionModalProps) =>
                 >
                   Register Now <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
-                
+
                 <p className="text-[9px] text-white/40 italic">
                   * Filling up fast! Join the successful batch today.
                 </p>

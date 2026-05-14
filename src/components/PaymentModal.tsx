@@ -23,13 +23,13 @@ const PaymentModal = ({
   open, onClose, courseId, courseTitle, price: finalPrice, originalPrice, onSuccess
 }: PaymentModalProps) => {
   const { refreshUser } = useAuth();
-  const [showPayment, setShowPayment] = useState(true); 
+  const [showPayment, setShowPayment] = useState(true);
   const [step, setStep] = useState<'qr' | 'verify' | 'done'>('qr');
   const [utr, setUtr] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const UPI_ID = '9557370466@axl'; 
+  const UPI_ID = '9557370466@axl';
   const SUPPORT_NUMBER = '+91 97602 93095';
 
   const handleCopyUPI = () => {
@@ -143,7 +143,7 @@ const PaymentModal = ({
                 <CheckCircle className="h-10 w-10 text-emerald-400 mx-auto mb-3" />
                 <h3 className="text-xl font-bold font-display mb-2">Confirm Payment</h3>
                 <p className="text-muted-foreground text-sm mb-4">
-                  Enter your UTR/Transaction ID for faster approval (optional)
+                  Enter your UTR/Transaction ID for faster approval (REQUIRED).
                 </p>
                 <p className="text-[10px] text-primary font-bold mb-4 bg-primary/5 p-2 rounded-lg border border-primary/20">
                   * Please send the receipt or a screenshot to: {SUPPORT_NUMBER}
