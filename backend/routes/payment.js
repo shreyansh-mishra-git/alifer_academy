@@ -41,7 +41,7 @@ router.post('/request', protect, async (req, res) => {
     const payment = await Payment.create({
       userId: req.user._id,
       courseId,
-      amount: 9, // Hardcoded price as per requirement
+      amount: course.price, // Use actual course price
       utrNumber: utrNumber || '',
       status: 'pending',
       createdAt: new Date(), // Explicitly capture server time

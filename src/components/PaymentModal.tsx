@@ -149,7 +149,7 @@ const PaymentModal = ({
                   * Please send the receipt or a screenshot to: {SUPPORT_NUMBER}
                 </p>
                 <Input
-                  placeholder="UTR / Transaction ID (optional)"
+                  placeholder="UTR / Transaction ID (REQUIRED)"
                   value={utr}
                   onChange={(e) => setUtr(e.target.value)}
                   className="mb-4 bg-muted/50 border-border text-center"
